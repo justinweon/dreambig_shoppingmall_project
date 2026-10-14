@@ -24,20 +24,27 @@ export default function OverviewSection({ data }: OverviewSectionProps) {
 
 
   return (
-    <section>
-      <ProductGallery
-        images={data.images}
-        selectedImageId={selectedImageId}
-        onImageSelect={setSelectedImageId}
-      />
-      <ProductInfo product={data.product} currency={data.currency} />
+    <section
+      aria-label="상품 정보와 구매"
+      className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12"
+    >
+      <div className="min-w-0">
+        <ProductGallery
+          images={data.images}
+          selectedImageId={selectedImageId}
+          onImageSelect={setSelectedImageId}
+        />
+      </div>
 
-      <ProductPurchasePanel
-        productId={data.product.id}
-        quantity={quantity}
-        onQuantityChange={setQuantity}
-        onAddToCart={handleAddToCart}
-      />
+      <div className="min-w-0 space-y-8">
+        <ProductInfo product={data.product} currency={data.currency} />
+        <ProductPurchasePanel
+          productId={data.product.id}
+          quantity={quantity}
+          onQuantityChange={setQuantity}
+          onAddToCart={handleAddToCart}
+        />
+      </div>
     </section>
   );
 }
