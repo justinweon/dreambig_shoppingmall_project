@@ -36,7 +36,7 @@ export default function ProductDetailPage({data, template}: ProductDetailPagePro
       {template.sections.map((section)=>{
         switch(section.kind){
           case "overview":
-            return <OverviewSection key={section.id}/>;
+            return <OverviewSection key={section.id} data={data}/>;
           case "specifications":
             return <ProductSpecifications key={section.id}/>;
           case "reviews":
