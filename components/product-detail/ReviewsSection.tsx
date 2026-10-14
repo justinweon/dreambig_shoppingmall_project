@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ProductDetailData } from "@/util/types/detail";
 import type { DetailImage } from "@/util/types/product";
 import ProductReviews from "./ProductReviews";
+import ImageModal from "./ImageModal";
 
 interface ReviewsSectionProps {
   title: string;
@@ -17,10 +18,10 @@ export default function ReviewsSection({
   pageSize,
 }: ReviewsSectionProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedReviewImage, setSelectedReviewImage] = useState<DetailImage | null>(null);
 
   // 페이지 크기가 잘못 들어오면 기본값 4를 사용한다.
-  const size =
-    Number.isSafeInteger(pageSize) && pageSize > 0 ? pageSize : 4;
+  const size = Number.isSafeInteger(pageSize) && pageSize > 0 ? pageSize : 4;
 
   const totalPages = Math.max(1, Math.ceil(reviews.length / size));
 
@@ -30,7 +31,7 @@ export default function ReviewsSection({
   const visibleReviews = reviews.slice(startIndex, startIndex + size);
 
   function handleImageOpen(image: DetailImage) {
-    console.log("확대할 리뷰 사진:", image);
+    setSelectedReviewImage(image);
   }
 
   return (
@@ -70,6 +71,16 @@ export default function ReviewsSection({
           </button>
         </nav>
       )}
+
+      {selectedReviewImage && (
+        <ImageModal
+          key={selectedReviewImage.id}
+          image={selectedReviewImage}
+          onClose={()=> setSelectedReviewImage(null)}
+        />
+      )
+
+      }
     </section>
   );
 }
