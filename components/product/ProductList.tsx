@@ -6,7 +6,7 @@ import Link from "next/link"
 
 export default function ProductList(): React.JSX.Element {
   return (
-    <div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {products.map((product) => (
         <Link key={product.id} href={`/product/${product.id}`}>
         <ProductCard
