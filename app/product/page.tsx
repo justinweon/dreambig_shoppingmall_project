@@ -1,3 +1,10 @@
-export default function ProductPage() {
-  return null;
+import ProductList from '@/components/product/ProductList'
+
+export default function ProductPage(): React.JSX.Element {
+  return (
+    <div>
+      <ProductList
+      />
+    </div>
+  )
 }
