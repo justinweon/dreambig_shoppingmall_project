@@ -30,7 +30,7 @@ export default function ProductDetailPage({ data, template }: ProductDetailPageP
   //}).format(product.price);
 
   return (
-    <main>
+    <main className="mx-auto w-full max-w-6xl space-y-12 px-4 py-8 sm:px-6 lg:space-y-20 lg:px-8 lg:py-12">
       {template.sections.map((section) => {
         switch (section.kind) {
           case "overview":
