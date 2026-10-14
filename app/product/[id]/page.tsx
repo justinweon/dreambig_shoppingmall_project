@@ -1,6 +1,7 @@
 import ProductDetailPage from "@/components/product-detail/ProductDetailPage";
 import { mockProductDetails } from "@/shared/product-detail/detailData";
 import { notFound } from "next/navigation";
+import { detailTemplates } from "@/shared/product-detail/templates";
 
 interface ProductDetailRouteProps {
   params : Promise<{id : string}>;
@@ -27,5 +28,13 @@ export default async function ProductDetailPageRoute({params,} : ProductDetailRo
     notFound(); // 이페이지는 찾을 수 없다!
   }
 
-  return <ProductDetailPage data={detail_data}/>;
+  const detail_template = detailTemplates.find(
+    (template) => template.id === detail_data.templateId,
+  );
+
+  if(!detail_template){
+    return <p>상품 상세 구성을 찾을 수 없습니다.</p>
+  }
+
+  return <ProductDetailPage data={detail_data} template={detail_template}/>;
 }

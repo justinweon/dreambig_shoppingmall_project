@@ -1,11 +1,15 @@
-import Image from "next/image";
 import type { ProductDetailData } from "@/shared/product-detail/detailData";
+import type { DetailTemplate } from "@/shared/product-detail/templates";
+import OverviewSection from "./OverviewSection";
+import ProductSpecifications from "./ProductSpecifications";
+import ReviewsSection from "./ReviewsSection";
 
 interface ProductDetailPageProps {
   data: ProductDetailData;
+  template: DetailTemplate;
 }
 
-export default function ProductDetailPage({data,}: ProductDetailPageProps) {
+export default function ProductDetailPage({data, template}: ProductDetailPageProps) {
   const { product } = data;
 
   // 가격 숫자를 통화 형식의 문자열로 바꾸는 코드
@@ -21,25 +25,24 @@ export default function ProductDetailPage({data,}: ProductDetailPageProps) {
   //  currency: "JPY",
   //}).format(8000);
 
-  const formatted_price = new Intl.NumberFormat("ko-KR", {
-    style: "currency",
-    currency: data.currency,
-  }).format(product.price);
+  // ProductInfo로 이전 계획중
+  //const formatted_price = new Intl.NumberFormat("ko-KR", {
+  //  style: "currency",
+  //  currency: data.currency,
+  //}).format(product.price);
 
   return (
     <main>
-      <h1>{product.name}</h1>
-
-      <Image
-        src={product.imageUrl}
-        alt={product.name}
-        width={400}
-        height={400}
-        className="h-auto max-w-full"
-      />
-
-      <p>{formatted_price}</p>
-      <p>{product.description}</p>
+      {template.sections.map((section)=>{
+        switch(section.kind){
+          case "overview":
+            return <OverviewSection key={section.id}/>;
+          case "specifications":
+            return <ProductSpecifications key={section.id}/>;
+          case "reviews":
+            return <ReviewsSection key={section.id}/>;
+        }
+      })}
     </main>
   );
 }
