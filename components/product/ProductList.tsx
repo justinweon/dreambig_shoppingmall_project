@@ -1,3 +1,4 @@
+// 정기
 import ProductCard from "@/components/product/ProductCard"
 import { products } from "@/util/data/products" 
 import Link from "next/link"

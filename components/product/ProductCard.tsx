@@ -1,3 +1,4 @@
+//정기
 import Image from 'next/image'
 import type { ImageSource } from '@/util/types/product'
 
