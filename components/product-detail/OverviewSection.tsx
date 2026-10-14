@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import type { ProductDetailData } from "@/util/types/detail";
+import type { AddToCartRequest } from "@/util/types/cart";
 import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
 import ProductPurchasePanel from "./ProductPurchasePanel";
-import type { AddToCartRequest } from "@/util/types/cart";
 
 interface OverviewSectionProps {
   data: ProductDetailData;
