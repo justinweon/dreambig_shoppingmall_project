@@ -1,5 +1,5 @@
-import type { ProductDetailData } from "@/shared/product-detail/detailData";
-import type { DetailTemplate } from "@/shared/product-detail/templates";
+import type { ProductDetailData } from "@/util/types/detail";
+import type { DetailTemplate } from "@/util/types/detail";
 import OverviewSection from "./OverviewSection";
 import ProductSpecifications from "./ProductSpecifications";
 import ReviewsSection from "./ReviewsSection";
@@ -10,8 +10,6 @@ interface ProductDetailPageProps {
 }
 
 export default function ProductDetailPage({data, template}: ProductDetailPageProps) {
-  const { product } = data;
-
   // 가격 숫자를 통화 형식의 문자열로 바꾸는 코드
   // 달러 → "$8,000.00"
   //new Intl.NumberFormat("en-US", {

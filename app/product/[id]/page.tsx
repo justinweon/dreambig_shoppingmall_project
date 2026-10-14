@@ -1,16 +1,13 @@
 import ProductDetailPage from "@/components/product-detail/ProductDetailPage";
-import { mockProductDetails } from "@/shared/product-detail/detailData";
+import { getProductDetailData } from "@/util/product";
 import { notFound } from "next/navigation";
-import { detailTemplates } from "@/shared/product-detail/templates";
+import { detailTemplates } from "@/util/data/detailTemplates";
 
 interface ProductDetailRouteProps {
   params : Promise<{id : string}>;
 }
 
 export default async function ProductDetailPageRoute({params,} : ProductDetailRouteProps){
-  // 임시데이터 홍정기님 상품페이지에서 받아와야함!
-  //const detail_data = mockProductDetails[0];
-
   const { id } = await params;
   const product_id = Number(id);
 
@@ -19,10 +16,8 @@ export default async function ProductDetailPageRoute({params,} : ProductDetailRo
     notFound(); // 이페이지는 찾을 수 없다!
   }
 
-  // 변경 : URL의 ID와 일치하는 상품
-  const detail_data = mockProductDetails.find(
-    (detail) => detail.product.id === product_id,
-  );
+  // 공통 상품과 상세 설정, 리뷰를 같은 상품 ID로 조합한다.
+  const detail_data = getProductDetailData(product_id);
 
   if(!detail_data){
     notFound(); // 이페이지는 찾을 수 없다!

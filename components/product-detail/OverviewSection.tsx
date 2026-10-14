@@ -1,4 +1,4 @@
-import type { ProductDetailData } from "@/shared/product-detail/detailData";
+import type { ProductDetailData } from "@/util/types/detail";
 import ProductInfo from "./ProductInfo";
 
 interface OverviewSectionpProps{

@@ -1,4 +1,4 @@
-import { ProductDetailData } from "@/shared/product-detail/detailData";
+import type { ProductDetailData } from "@/util/types/detail";
 
 interface ProdcutInfoProps{
   product: ProductDetailData["product"],
