@@ -1,10 +1,10 @@
 import type { Product } from "../types/product";
 import keyRingImage from "@/shared/asset/sejong_key_ring.png";
-import mugcupImage from "@/shared/asset/sejong_mugcup.png";
+import mugcupImage from "@/shared/asset/sejong_mug_cup.png";
 import laptopImage from "@/shared/asset/sejong_laptop_cover.png";
 import mousePadImage from "@/shared/asset/sejong_mouse_pad.png";
 import photoCardImage from "@/shared/asset/sejong_photo_card.png";
-import wallpaperImage from "@/shared/asset/sejong_wall_paper.png";
+import iMacImage from "@/shared/asset/sejong_iMac.png";
 
 // 데이터 관리: 양석호 / 사용: 홍정기(목록), 양석호(상세/배너/캐러셀), 장바구니 담당자.
 // 기존 여섯 상품의 이름/가격과 101/102 ID를 보존한 프로젝트 공통 데이터다.
@@ -62,7 +62,7 @@ export const products: readonly Product[] = [
     price: 2000,
     currency: "KRW",
     category: "개발용 굿즈",
-    imageUrl: wallpaperImage,
+    imageUrl: iMacImage,
     description: "상품 목록과 상세 연결을 확인하기 위한 월페이퍼 예시입니다.",
   },
 ];
