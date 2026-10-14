@@ -36,7 +36,7 @@ export default function ProductDetailPage({data, template}: ProductDetailPagePro
           case "overview":
             return <OverviewSection key={`${data.product.id}-${section.id}`} data={data}/>;
           case "specifications":
-            return <ProductSpecifications key={section.id}/>;
+            return <ProductSpecifications key={section.id} title={section.payload.title} specifications={data.specifications}/>;
           case "reviews":
             return <ReviewsSection key={section.id}/>;
         }
