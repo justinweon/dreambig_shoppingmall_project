@@ -9,7 +9,7 @@ interface ProductDetailPageProps {
   template: DetailTemplate;
 }
 
-export default function ProductDetailPage({data, template}: ProductDetailPageProps) {
+export default function ProductDetailPage({ data, template }: ProductDetailPageProps) {
   // 가격 숫자를 통화 형식의 문자열로 바꾸는 코드
   // 달러 → "$8,000.00"
   //new Intl.NumberFormat("en-US", {
@@ -31,14 +31,21 @@ export default function ProductDetailPage({data, template}: ProductDetailPagePro
 
   return (
     <main>
-      {template.sections.map((section)=>{
-        switch(section.kind){
+      {template.sections.map((section) => {
+        switch (section.kind) {
           case "overview":
-            return <OverviewSection key={`${data.product.id}-${section.id}`} data={data}/>;
+            return <OverviewSection key={`${data.product.id}-${section.id}`} data={data} />;
           case "specifications":
-            return <ProductSpecifications key={section.id} title={section.payload.title} specifications={data.specifications}/>;
+            return <ProductSpecifications key={section.id} title={section.payload.title} specifications={data.specifications} />;
           case "reviews":
-            return <ReviewsSection key={section.id}/>;
+            return (
+              <ReviewsSection
+                key={`${data.product.id}-${section.id}`}
+                title={section.payload.title}
+                reviews={data.reviews}
+                pageSize={section.payload.pageSize}
+              />
+            );
         }
       })}
     </main>
