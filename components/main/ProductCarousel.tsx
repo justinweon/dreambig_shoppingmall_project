@@ -16,7 +16,6 @@ interface ProductCarouselProps {
 export default function ProductCarousel({ entries, title = "세종으로 완성하는 일상", autoplayMs = 6000 }: ProductCarouselProps) {
   const container_ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
-  const [paused, setPaused] = useState(false);
   useEffect(() => {
     const element = container_ref.current;
     if (!element) return;
@@ -28,12 +27,12 @@ export default function ProductCarousel({ entries, title = "세종으로 완성�
   return (
     <div ref={container_ref} className="min-w-0">
       <CarouselTrack key={`${visible}:${entries.map(({ item }) => item.id).join(",")}`} entries={entries}
-        title={title} autoplayMs={autoplayMs} width={width} visible={visible} paused={paused} onPauseChange={setPaused} />
+        title={title} autoplayMs={autoplayMs} width={width} visible={visible} />
     </div>
   );
 }
 
-function CarouselTrack({ entries, title, autoplayMs, width, visible, paused, onPauseChange }: Required<ProductCarouselProps> & { width: number; visible: number; paused: boolean; onPauseChange: (paused: boolean) => void }) {
+function CarouselTrack({ entries, title, autoplayMs, width, visible }: Required<ProductCarouselProps> & { width: number; visible: number }) {
   const reduced_motion = useReducedMotion();
   const count = entries.length;
   const can_move = count > 1 && width > 0;
@@ -95,10 +94,10 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible, paused, onP
   }, [moving, finishTransition]);
 
   useEffect(() => {
-    if (!can_move || reduced_motion || paused || focused || touching) return;
+    if (!can_move || reduced_motion || focused || touching) return;
     const timer = setInterval(() => { if (!document.hidden) move(1); }, Math.max(1000, autoplayMs));
     return () => clearInterval(timer);
-  }, [can_move, reduced_motion, paused, focused, touching, autoplayMs, move]);
+  }, [can_move, reduced_motion, focused, touching, autoplayMs, move]);
 
   useEffect(() => () => { if (click_timer_ref.current) clearTimeout(click_timer_ref.current); }, []);
 
@@ -108,7 +107,7 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible, paused, onP
       ...Array.from({ length: visible }, (_, i) => ({ entry: entries[i % count], key: `after-${i}` }))]
     : entries.map((entry) => ({ entry, key: entry.item.id }));
   const active_index = wrapIndex(index, count);
-  const auto_running = can_move && !reduced_motion && !paused && !focused && !touching;
+  const auto_running = can_move && !reduced_motion && !focused && !touching;
 
   return (
     <section aria-label={title} aria-roledescription="캐러셀" className="ysh-product-carousel"
@@ -159,7 +158,7 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible, paused, onP
           })}
         </div>
       </div>}
-      {can_move && <ProductCarouselControls index={active_index} paused={paused} reducedMotion={reduced_motion} autoRunning={auto_running} autoplayMs={autoplayMs} onMove={move} onPauseChange={onPauseChange} />}
+      {can_move && <ProductCarouselControls index={active_index} reducedMotion={reduced_motion} autoRunning={auto_running} autoplayMs={autoplayMs} onMove={move} />}
     </section>
   );
 }
