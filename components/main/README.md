@@ -25,11 +25,11 @@ import HomeThirdSection from "@/components/main/HomeThirdSection";
 - `ProductBanner`: banner/product 입력, 16:9 전폭 사진, 중앙 제목/가격/두 CTA. 모바일 최소 높이 620px.
 - `ProductCarousel`: entries(item/product), 선택 title/autoplayMs. 기본 6초 이동. 카드 280×360px, 간격 14px. 600px 미만에서는 220×300px. 양 끝 복제 구간으로 반복하며 보이는 카드만 키보드/접근성 트리에 포함한다.
 - `ProductCarouselCard`: 기본 상품 사진/제목/상세 링크. 별도 hover 사진이 있는 상품에만 전환 사진을 표시한다.
-- `ProductCarouselControls`: 이전/다음, 현재 위치, 정지와 진행 원을 분리한다.
+- `ProductCarouselControls`: 기존 공통 Button과 Lucide의 ChevronLeft/ChevronRight/Pause/Play를 사용한다. 진행 원은 별도 SVG/CSS로 유지한다.
 - `HunminJeongeumMarquee`: 제목과 두 행을 조합한다.
 - `HunminConsonantRow`, `HunminVowelRow`: 각각 48초/34초로 같은 방향으로 이동한다. 공통 `HunminLetterRow`를 사용하되 정지 상태는 각 인스턴스에 둔다.
 
-캐러셀은 hover/focus/포인터 유지/수동 정지/모션 감소 설정에서 자동 이동을 멈춘다. 수평 스와이프 뒤 링크 클릭을 억제한다. 수동 정지는 리사이즈 후에도 유지하고 숨겨진 문서에서는 자동 이동하지 않는다. 타이머, animation frame, ResizeObserver는 해제 시 정리한다. 상품 0개에서는 캐러셀을 생략하고 1개에서는 제어 버튼과 자동 이동을 생략한다.
+상품 캐러셀은 마우스를 올려도 자동 이동을 계속한다. focus/포인터 유지/수동 정지/모션 감소 설정에서는 멈춘다. 수평 스와이프 뒤 링크 클릭을 억제한다. 수동 정지는 리사이즈 후에도 유지하고 숨겨진 문서에서는 자동 이동하지 않는다. 타이머, animation frame, ResizeObserver는 해제 시 정리한다. 상품 0개에서는 캐러셀을 생략하고 1개에서는 제어 버튼과 자동 이동을 생략한다.
 
 글자 행은 **해당 행의 hover/focus만 정지**하며 수동 정지 버튼도 독립적이다. 반복 복제 목록에는 aria-hidden을 적용한다. 모션 감소 설정에서는 원본 글자 목록을 정적으로 표시한다. 기존 `PartnerLogoMarquee`는 현재 조합에서 사용하지 않는다.
 
@@ -50,3 +50,7 @@ npx tsx --test components/main/carouselModel.test.ts components/product-detail/r
 
 ![메인 데스크톱](../../docs/ysh/main-reference-desktop.jpg)
 ![메인 모바일](../../docs/ysh/main-reference-mobile.jpg)
+
+공통 버튼 적용 후 빌드/TypeScript, 변경 파일 ESLint, 캐러셀 테스트 3개를 통과했다. 브라우저에서 hover 중 위치 변경, 다음/정지/재생과 20px Lucide 아이콘을 확인했다. 훈민정음은 각 행의 hover 시 해당 행만 정지한다.
+
+![공통 버튼과 Lucide 아이콘](../../docs/ysh/carousel-common-controls.jpg)
