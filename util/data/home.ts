@@ -14,7 +14,7 @@ export const productBanners: readonly ProductBannerData[] = [
     productId: 101,
     headline: "일상에 담은 작은 세종",
     supportingText: "가방과 열쇠에 더하는 나만의 세종 컬렉션",
-    desktopImage: { src: "/ysh/sejong-keyring-hero.png", alt: "서재의 캔버스 가방에 걸린 세종 캐릭터 키링" },
+    desktopImage: { src: "/images/sejong-keyring-hero.png", alt: "서재의 캔버스 가방에 걸린 세종 캐릭터 키링" },
     actions: [{ label: "자세히 보기", href: "/product/101#product-features" }, { label: "상품 보기", href: "/product/101" }],
   },
 ];

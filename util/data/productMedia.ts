@@ -37,5 +37,5 @@ export const productMedia: Readonly<Record<ProductId, ProductMedia>> = {
   103: { gallery: [laptopMain, laptopGallery], feature: laptopFeature, hover: laptopHover },
   104: { gallery: [padMain, padGallery], feature: padFeature, hover: padHover },
   105: { gallery: [photoMain, photoGallery], feature: photoFeature },
-  106: { gallery: [macMain, macGallery], feature: macFeature, hover: "/ysh/sejong-imac-hover.png" },
+  106: { gallery: [macMain, macGallery], feature: macFeature, hover: "/images/sejong-imac-hover.png" },
 };
