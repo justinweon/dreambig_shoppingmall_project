@@ -33,7 +33,7 @@ export default function ReviewsSection({
   }
 
   return (
-    <section id={id} aria-label={title} className="ysh-detail-reviews">
+    <section id={id} aria-label={title} className="productdetailpage-detail-reviews">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-xl font-bold sm:text-2xl">{title}</h2>
         <p className="text-sm tabular-nums">{summary.average === null ? "평점 없음" : `평균 ${summary.average.toFixed(1)} / 5`} <span className="ml-3">리뷰 {summary.count}개</span></p>

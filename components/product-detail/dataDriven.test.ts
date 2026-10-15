@@ -30,7 +30,7 @@ const render = (value = data, layout = template) => renderToStaticMarkup(createE
 
 test("목차의 순서와 제목, 링크 대상은 변경된 템플릿과 일치한다", () => {
   const html = render();
-  const nav = html.match(/<nav class="ysh-detail-nav"[^>]*>(.*?)<\/nav>/)?.[1] ?? "";
+  const nav = html.match(/<nav class="productdetailpage-detail-nav"[^>]*>(.*?)<\/nav>/)?.[1] ?? "";
   assert.ok(nav.indexOf("고객 의견") < nav.indexOf("재료 안내"));
   assert.ok(nav.indexOf("재료 안내") < nav.indexOf("제작 이야기"));
   for (const id of ["customer-voices", "materials", "story"]) {
@@ -44,7 +44,7 @@ test("빈 설명과 사양 및 제거된 리뷰 섹션은 목차와 바로가기
   const html = render({ ...data, features: [], specifications: [] }, {
     ...template, sections: template.sections.filter((section) => section.kind !== "reviews"),
   });
-  assert.ok(!html.includes('class="ysh-detail-nav"'));
+  assert.ok(!html.includes('class="productdetailpage-detail-nav"'));
   assert.ok(!html.includes('href="#product-'));
 });
 
