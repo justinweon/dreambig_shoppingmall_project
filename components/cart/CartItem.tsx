@@ -1,7 +1,5 @@
 import Image from "next/image";
 import type { ImageSource } from "@/util/types/product";
-import { Plus } from "lucide-react";
-import { Minus } from "lucide-react";
 import { TrashIcon } from "@/lib/utils";
 // components/cart/CartItem.tsx
 import QuantitySelector from "@/components/product-detail/components/QuantitySelector";

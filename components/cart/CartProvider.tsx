@@ -88,7 +88,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // 상품을 정상적으로 담았을 때만 모달 열기
     setIsCartOpen(true);
 
-    function updateQuantity(productId: CartItem["productId"], quantity: number) {
+    return { ok: true };
+  }
+
+  function updateQuantity(productId: CartItem["productId"], quantity: number) {
   if (!Number.isSafeInteger(quantity) || quantity < 1) return;
   const nextItems = itemsRef.current.map((item) =>
     item.productId === productId ? { ...item, quantity } : item,
@@ -96,9 +99,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   itemsRef.current = nextItems;
   setItems(nextItems);
 }
-
-    return { ok: true };
-  }
 
   return (
     <CartContext.Provider value={{ items, addItem, isCartOpen, setIsCartOpen, updateQuantity}}>

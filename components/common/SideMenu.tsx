@@ -23,7 +23,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
 
     const dialogRef = useRef<HTMLDialogElement>(null);
 
-    const { items } = useCart();
+    const { items, updateQuantity } = useCart();
 
     const product_num = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -133,8 +133,8 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                                 name={product.name}
                                 price={product.price}
                                 imageUrl={product.imageUrl}
-                                quantity={product.quantity}
-                                onQuantityChange={(q) => updateQuantity(product.productId, q)}
+                                quantity={item.quantity}
+                                onQuantityChange={(q) => updateQuantity(item.productId, q)}
                             />
                         );
                     })}
