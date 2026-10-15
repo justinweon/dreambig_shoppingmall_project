@@ -16,11 +16,9 @@ interface SideMenuProps {
 }
 export default function SideMenu({isCartOpen, setIsCartOpen}: SideMenuProps) {
 
-const [isRotated, setIsRotated] = useState(false);
-
-const dialogRef = useRef<HTMLDialogElement>(null);
-
-let Product_num = 0;
+    const [isRotated, setIsRotated] = useState(false);
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    let Product_num = 0;
 
 useEffect(() => {
     const dialog = dialogRef.current;
@@ -37,19 +35,19 @@ useEffect(() => {
 
     return (
         <dialog
-    ref={dialogRef}
-    aria-labelledby="cart-title"
-    onClose={() => setIsCartOpen(false)}
-    className="
-    fixed inset-y-0 right-0 left-auto m-0
-    h-dvh max-h-none w-[480px] max-w-full
-    overflow-y-auto border-0 bg-white p-0 text-black
-    backdrop:bg-black/20 backdrop:backdrop-blur-sm
-    [&_button]:cursor-pointer
-    "
->
+        ref={dialogRef}
+        aria-labelledby="cart-title"
+        onClose={() => setIsCartOpen(false)}
+        className="
+        fixed inset-y-0 right-0 left-auto m-0
+        h-dvh max-h-none w-[480px] max-w-full
+        overflow-y-auto border-0 bg-white p-0 text-black
+        backdrop:bg-black/20 backdrop:backdrop-blur-sm
+        [&_button]:cursor-pointer
+        "
+        >
             <div className="flex justify-between border-b border-black">
-                <div id = "cart-title" className="text-[22px] ml-[36px] mt-[24px] mb-[25px]">Your Cart{Product_num}</div>
+                <div id = "cart-title" className="text-[22px] ml-[36px] mt-[24px] mb-[25px]">장바구니 ({Product_num})</div>
                 <button type='button'
                 onClick={() => setIsCartOpen(false)}
                 onMouseEnter={() => setIsRotated(true)}
@@ -60,7 +58,7 @@ useEffect(() => {
                 />
                 </button>
             </div>
-            <div className="h-[465px] flex flex-col items-center justify-center gap-4">
+            {/* <div className="h-[465px] flex flex-col items-center justify-center gap-4">
                 <div className=""><ShoppingBasket className="h-20 w-20"/></div>
                 <div className="">your cart is ready!</div>
 
@@ -82,16 +80,27 @@ useEffect(() => {
                         group-focus-visible:w-4
                         group-focus-visible:opacity-100"><ChevronRight/></span>
                 </Button>
-            </div>
-        
+            </div> */}
 
 
-
+            {/*목데이터 */}
+            <CartItem
+            name={products[0].name}
+            price={products[0].price}
+            imageUrl={products[0].imageUrl}
+            />
 
 
             <div>
-                <div className="text-2xl m-5">choose your setup</div>
+                <div className="text-2xl m-5">이런 제품도 있어요</div>
                 <CartRecomms/>
+            </div>
+            
+            <div>
+                <div> Free Shipping  </div>
+                <div>  </div>
+                <div> 무료 배송 </div>
+                <div> 무료 배송 </div>
             </div>
             
         </dialog>

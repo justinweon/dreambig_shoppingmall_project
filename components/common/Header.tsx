@@ -75,7 +75,3 @@ console.log(products.length);
 
 )}
 
-
-function ProductMenuItem({ imageUrl, name }: ProductMenuItemProps) {
-
-}
