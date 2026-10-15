@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 
 interface ProductCarouselControlsProps {
   index: number;
-  count: number;
   paused: boolean;
   reducedMotion: boolean;
   autoRunning: boolean;
@@ -12,9 +11,8 @@ interface ProductCarouselControlsProps {
   onPauseChange: (paused: boolean) => void;
 }
 
-export default function ProductCarouselControls({ index, count, paused, reducedMotion, autoRunning, autoplayMs, onMove, onPauseChange }: ProductCarouselControlsProps) {
+export default function ProductCarouselControls({ index, paused, reducedMotion, autoRunning, autoplayMs, onMove, onPauseChange }: ProductCarouselControlsProps) {
   return <div className="ysh-carousel-controls" aria-label="상품 캐러셀 조작">
-    <span className="ysh-carousel-position" aria-live={autoRunning ? "off" : "polite"}>{index + 1} / {count}</span>
     <Button type="button" variant="ghost" size="icon" aria-label={paused ? "상품 자동 재생" : "상품 자동 재생 정지"} aria-pressed={paused || reducedMotion} disabled={reducedMotion} onClick={() => onPauseChange(!paused)}>
       {paused || reducedMotion ? <Play className="size-5" aria-hidden="true" /> : <Pause className="size-5" aria-hidden="true" />}
     </Button>

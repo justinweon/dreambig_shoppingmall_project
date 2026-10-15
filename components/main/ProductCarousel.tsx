@@ -159,7 +159,7 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible, paused, onP
           })}
         </div>
       </div>}
-      {can_move && <ProductCarouselControls index={active_index} count={count} paused={paused} reducedMotion={reduced_motion} autoRunning={auto_running} autoplayMs={autoplayMs} onMove={move} onPauseChange={onPauseChange} />}
+      {can_move && <ProductCarouselControls index={active_index} paused={paused} reducedMotion={reduced_motion} autoRunning={auto_running} autoplayMs={autoplayMs} onMove={move} onPauseChange={onPauseChange} />}
     </section>
   );
 }
