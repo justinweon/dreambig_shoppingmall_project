@@ -58,11 +58,11 @@ export const products: readonly Product[] = [
   },
   {
     id: 106,
-    name: "월페이퍼",
+    name: "아이맥",
     price: 2000,
     currency: "KRW",
     category: "개발용 굿즈",
     imageUrl: iMacImage,
-    description: "상품 목록과 상세 연결을 확인하기 위한 월페이퍼 예시입니다.",
+    description: "상품 목록과 상세 연결을 확인하기 위한 아이맥 예시입니다.",
   },
 ];
