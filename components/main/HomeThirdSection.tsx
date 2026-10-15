@@ -22,7 +22,7 @@ export default function HomeThirdSection({ products = defaultProducts, banners =
     return product ? [{ item, product }] : [];
   });
   return (
-    <div className="mx-auto w-full min-w-0 max-w-7xl space-y-16 px-4 py-12 text-stone-950 sm:px-6 lg:space-y-24 lg:px-8">
+    <div className="ysh-home-third">
       {banners.map((banner) => {
         const product = product_by_id.get(banner.productId);
         return product ? <ProductBanner key={banner.id} banner={banner} product={product} /> : null;

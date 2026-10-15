@@ -1,17 +1,15 @@
 import type { CarouselItem, PartnerLogo, ProductBannerData } from "../types/home";
 // 양석호: 기존 상품 이미지를 배너 콘텐츠로 재사용한다.
-import keyRingImage from "@/shared/asset/sejong_key_ring.png";
 
 // 데이터 관리/사용: 양석호(메인 세 번째 영역). 배열 순서가 노출 순서다.
 export const productBanners: readonly ProductBannerData[] = [
   {
     id: "sejong-keyring",
     productId: 101,
-    headline: "작은 소품에 담은 세종의 이야기",
-    supportingText: "매일 손이 가는 물건에 좋아하는 이야기를 더해 보세요. DreamBig의 세종 컬렉션을 만나보세요.",
-    desktopImage: { src: keyRingImage, alt: "세종 캐릭터 키링" },
-    mobileImage: { src: keyRingImage, alt: "세종 캐릭터 키링" },
-    actions: [{ label: "키링 자세히 보기", href: "/product/101" }, { label: "상품 둘러보기", href: "/product" }],
+    headline: "일상에 담은 작은 세종",
+    supportingText: "가방과 열쇠에 더하는 나만의 세종 컬렉션",
+    desktopImage: { src: "/ysh/sejong-keyring-hero.png", alt: "서재의 캔버스 가방에 걸린 세종 캐릭터 키링" },
+    actions: [{ label: "자세히 보기", href: "/product/101#product-features" }, { label: "상품 보기", href: "/product/101" }],
   },
 ];
 // 실제 파트너 자료를 제공받으면 등록한다. 미리보기용 샘플은 별도 fixture에서만 사용한다.
