@@ -5,12 +5,14 @@ interface ProductGalleryProps {
   images: ProductDetailData["images"];
   selectedImageId: string | null;
   onImageSelect: (imageId: string) => void;
+  fit?: "contain" | "cover";
 }
 
 export default function ProductGallery({
   images,
   selectedImageId,
   onImageSelect,
+  fit = "contain",
 }: ProductGalleryProps) {
   const selectedImage =
     images.find((image) => image.id === selectedImageId) ?? images[0];
@@ -26,7 +28,8 @@ export default function ProductGallery({
         alt={selectedImage.alt}
         width={480}
         height={480}
-        className="h-auto w-full max-w-[480px] object-contain"
+        className={`aspect-square h-auto w-full rounded-2xl bg-stone-50 ${fit === "cover" ? "object-cover" : "object-contain"}`}
+        sizes="(min-width: 1024px) 50vw, 100vw"
       />
 
       {images.length > 1 && (

@@ -6,12 +6,15 @@ import type { AddToCartRequest } from "@/util/types/cart";
 import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
 import ProductPurchasePanel from "./ProductPurchasePanel";
+import type { AddToCartHandler } from "./cartConnection";
 
 interface OverviewSectionProps {
   data: ProductDetailData;
+  galleryFit?: "contain" | "cover";
+  onAddToCart?: AddToCartHandler;
 }
 
-export default function OverviewSection({ data }: OverviewSectionProps) {
+export default function OverviewSection({ data, galleryFit = "contain", onAddToCart }: OverviewSectionProps) {
   const [selectedImageId, setSelectedImageId] = useState<string | null>(
     data.images[0]?.id ?? null,
   );
@@ -19,7 +22,7 @@ export default function OverviewSection({ data }: OverviewSectionProps) {
 
   function handleAddToCart(request: AddToCartRequest) {
     // 원정린님 장바구니 함수가 준비되면 이곳에서 호출한다.
-    console.log("장바구니 담기 요청:", request);
+    return onAddToCart ? onAddToCart(request) : { ok: false as const, message: "현재 장바구니 담기를 사용할 수 없습니다." };
   }
 
 
@@ -33,6 +36,7 @@ export default function OverviewSection({ data }: OverviewSectionProps) {
           images={data.images}
           selectedImageId={selectedImageId}
           onImageSelect={setSelectedImageId}
+          fit={galleryFit}
         />
       </div>
 
@@ -42,7 +46,7 @@ export default function OverviewSection({ data }: OverviewSectionProps) {
           productId={data.product.id}
           quantity={quantity}
           onQuantityChange={setQuantity}
-          onAddToCart={handleAddToCart}
+          onAddToCart={onAddToCart ? handleAddToCart : undefined}
         />
       </div>
     </section>
