@@ -6,7 +6,7 @@ import type { AddToCartRequest } from "@/util/types/cart";
 import ProductGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
 import ProductPurchasePanel from "./ProductPurchasePanel";
-import type { AddToCartHandler } from "./cartConnection";
+import type { AddToCartHandler } from "../cartConnection";
 
 interface OverviewSectionProps {
   data: ProductDetailData;

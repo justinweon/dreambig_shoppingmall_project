@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import type { AddToCartRequest } from "@/util/types/cart";
 import QuantitySelector from "./QuantitySelector";
-import type { AddToCartHandler } from "./cartConnection";
+import type { AddToCartHandler } from "../cartConnection";
 
 interface ProductPurchasePanelProps {
   productId: AddToCartRequest["productId"];

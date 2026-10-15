@@ -5,7 +5,7 @@ import type { ProductDetailData } from "@/util/types/detail";
 import type { DetailImage } from "@/util/types/product";
 import ProductReviews from "./ProductReviews";
 import ImageModal from "./ImageModal";
-import { getReviewPage, getReviewSummary } from "./reviewModel";
+import { getReviewPage, getReviewSummary } from "../reviewModel";
 
 interface ReviewsSectionProps {
   title: string;

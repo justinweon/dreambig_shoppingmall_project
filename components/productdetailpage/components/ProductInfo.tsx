@@ -1,5 +1,5 @@
 import type { ProductDetailData } from "@/util/types/detail";
-import { getReviewSummary } from "./reviewModel";
+import { getReviewSummary } from "../reviewModel";
 
 type ProductInfoProps = Pick<ProductDetailData, "product" | "currency" | "summary" | "highlights" | "reviews">;
 

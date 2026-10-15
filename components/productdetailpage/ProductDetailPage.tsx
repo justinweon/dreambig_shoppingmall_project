@@ -2,11 +2,11 @@
 
 import type { ProductDetailData } from "@/util/types/detail";
 import type { DetailTemplate } from "@/util/types/detail";
-import OverviewSection from "./OverviewSection";
-import ProductSpecifications from "./ProductSpecifications";
-import ReviewsSection from "./ReviewsSection";
+import OverviewSection from "./components/OverviewSection";
+import ProductSpecifications from "./components/ProductSpecifications";
+import ReviewsSection from "./components/ReviewsSection";
 import type { AddToCartHandler } from "./cartConnection";
-import ProductFeatures from "./ProductFeatures";
+import ProductFeatures from "./components/ProductFeatures";
 import Link from "next/link";
 import "./productDetail.css";
 
