@@ -3,8 +3,8 @@ import bannerImage from '@/shared/asset/sejong_banner_3.png'
 
 export default function ProductHero(): React.JSX.Element {
     return (
-        <section className='-mt-[72px] md:grid md:grid-cols-1'>
-            <Image src={bannerImage} alt='맥북을 들고있는 세종대왕' className="h-auto w-full md:col-start-1 md:row-start-1"/>
+        <section className='md:grid md:grid-cols-1'>
+            <Image src={bannerImage} alt='맥북을 들고있는 세종대왕' className="h-auto w-full object-fit md:col-start-1 md:row-start-1"/>
             <div className="px-4 py-4 md:col-start-1 md:row-start-1 md:w-1/2 md:self-center md:px-12">
                 <h1 className='text-2xl font-bold md:text-4xl'>
                     세종대왕 굿즈
