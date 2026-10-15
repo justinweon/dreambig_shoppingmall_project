@@ -1,0 +1,11 @@
+.ysh-logo-row { overflow: hidden; }
+.ysh-logo-track { display: flex; width: max-content; min-width: 200%; animation: ysh-logo-scroll var(--duration, 28s) linear infinite; }
+.ysh-logo-group { display: flex; flex: 1 0 auto; align-items: center; justify-content: space-around; gap: 24px; padding: 12px; }
+.ysh-logo { display: flex; width: 144px; height: 80px; flex: 0 0 144px; align-items: center; justify-content: center; }
+.ysh-marquee:hover .ysh-logo-track, .ysh-marquee:focus-within .ysh-logo-track, .ysh-marquee-paused .ysh-logo-track { animation-play-state: paused; }
+@keyframes ysh-logo-scroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .ysh-logo-track { animation: none; transform: none; width: 100%; min-width: 0; }
+  .ysh-logo-group { flex-wrap: wrap; flex: 1 1 100%; min-width: 0; }
+  .ysh-logo-clone { display: none; }
+}

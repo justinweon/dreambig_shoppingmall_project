@@ -1,0 +1,34 @@
+import { products as defaultProducts } from "@/util/data/products";
+import { productBanners, carouselItems, partnerLogos } from "@/util/data/home";
+import type { Product } from "@/util/types/product";
+import type { ProductBannerData, CarouselItem, PartnerLogo } from "@/util/types/home";
+import ProductBanner from "./ProductBanner";
+import ProductCarousel from "./ProductCarousel";
+import PartnerLogoMarquee from "./PartnerLogoMarquee";
+
+interface HomeThirdSectionProps {
+  products?: readonly Product[];
+  banners?: readonly ProductBannerData[];
+  items?: readonly CarouselItem[];
+  logos?: readonly PartnerLogo[];
+  logoTitle?: string;
+}
+
+/** 양석호 담당 영역. 메인 담당자는 원하는 위치에서 이 컴포넌트 하나를 렌더링한다. */
+export default function HomeThirdSection({ products = defaultProducts, banners = productBanners, items = carouselItems, logos = partnerLogos, logoTitle }: HomeThirdSectionProps) {
+  const product_by_id = new Map(products.map((product) => [product.id, product]));
+  const entries = items.flatMap((item) => {
+    const product = product_by_id.get(item.productId);
+    return product ? [{ item, product }] : [];
+  });
+  return (
+    <div className="mx-auto w-full min-w-0 max-w-7xl space-y-16 px-4 py-12 text-stone-950 sm:px-6 lg:space-y-24 lg:px-8">
+      {banners.map((banner) => {
+        const product = product_by_id.get(banner.productId);
+        return product ? <ProductBanner key={banner.id} banner={banner} product={product} /> : null;
+      })}
+      <ProductCarousel entries={entries} />
+      <PartnerLogoMarquee logos={logos} title={logoTitle} />
+    </div>
+  );
+}
