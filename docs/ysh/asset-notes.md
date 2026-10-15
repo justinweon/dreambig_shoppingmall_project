@@ -4,7 +4,7 @@
 
 배너에 적합한 넓은 구도의 사진은 별도로 제작했다. 내장 imagegen 도구를 사용했으며 아래 원본 키링 사진을 제품 정체성 참고로 전달했다. 다른 사이트 사진은 내려받거나 사용하지 않았다.
 
-- 결과: `public/ysh/sejong-keyring-hero.png`
+- 결과: `public/images/sejong-keyring-hero.png`
 - 참고: `shared/asset/sejong_key_ring_1.png`
 - 용도: 메인 배너 전용, 실제 판매 사양이나 실물 사진을 보증하지 않는 연출 이미지
 - 제작: 2026-10-15
