@@ -66,7 +66,9 @@ export default function Header() {
             }`}
         >
           <div className='flex justify-evenly'>
-            {products.length > 0 && products.map((item) => <ProductList key={item.id} {...item} onSelect={() => setIsOpen(false)} />)}
+            {products.length > 0 && products.map((item) => <ProductList key={item.id} productId={item.id} {...item} 
+            onSelect={() => setIsOpen(false)} 
+            />)}
           </div>
         </div>
       </header>
