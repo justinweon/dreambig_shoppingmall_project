@@ -23,7 +23,7 @@ export default function ProductBlogSection() {
     ]
     return (
         <section className="mx-auto max-w-[1200px] px-4 py-12">
-            <h2 className="text-3xl font-bold mb-4">세종대왕의 일상</h2>
+            <h2 className="text-3xl font-bold mb-4 text-center">세종대왕의 일상</h2>
 
             <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
             {blogPosts.map((post) => (
