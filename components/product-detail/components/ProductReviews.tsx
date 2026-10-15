@@ -16,12 +16,12 @@ export default function ProductReviews({
   }
 
   return (
-    <ul className="ysh-review-list">
+    <ul className="productdetailpage-review-list">
       {reviews.map((review) => (
         <li key={review.id}>
           <div><p className="font-semibold">{review.authorName}</p>
-          <p className="ysh-review-stars" aria-label={`평점 ${review.rating} / 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</p>
-          <time className="ysh-review-date" dateTime={review.createdAt}>{review.createdAt.slice(0, 10)}</time></div>
+          <p className="productdetailpage-review-stars" aria-label={`평점 ${review.rating} / 5`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</p>
+          <time className="productdetailpage-review-date" dateTime={review.createdAt}>{review.createdAt.slice(0, 10)}</time></div>
           <div>
           <p className="mt-2 whitespace-pre-wrap break-words">
             {review.body}

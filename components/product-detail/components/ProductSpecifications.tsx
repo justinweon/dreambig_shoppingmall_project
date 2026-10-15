@@ -12,10 +12,10 @@ export default function ProductSpecifications({ id, title, specifications }: Pro
   }
 
   return (
-    <section id={id} aria-label={title} className="ysh-detail-specs">
+    <section id={id} aria-label={title} className="productdetailpage-detail-specs">
       <h2>{title}</h2>
 
-      <ul className="ysh-spec-list">
+      <ul className="productdetailpage-spec-list">
         {specifications.map((specification, index) => (
           <li key={index}>
             <strong>{specification.label}</strong>

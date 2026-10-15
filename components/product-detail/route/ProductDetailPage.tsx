@@ -8,7 +8,7 @@ import ReviewsSection from "../components/ReviewsSection";
 import type { AddToCartHandler } from "../cartConnection";
 import ProductFeatures from "../components/ProductFeatures";
 import Link from "next/link";
-import "../productDetail.css";
+import "../productdetailpage.css";
 import { getVisibleDetailSections, getSectionAnchor } from "../sectionModel";
 
 interface ProductDetailPageProps {
@@ -43,13 +43,13 @@ export default function ProductDetailPage({ data, template, onAddToCart }: Produ
   const reviewHref = reviewSection ? `#${getSectionAnchor(reviewSection)}` : undefined;
 
   return (
-    <main className="ysh-product-page"><div className="ysh-detail-inner">
-      <nav aria-label="현재 위치" className="ysh-breadcrumbs"><ol><li><Link href="/">홈</Link></li><li><Link href="/product">상품</Link></li><li aria-current="page">{data.product.name}</li></ol></nav>
+    <main className="productdetailpage"><div className="productdetailpage-detail-inner">
+      <nav aria-label="현재 위치" className="productdetailpage-breadcrumbs"><ol><li><Link href="/">홈</Link></li><li><Link href="/product">상품</Link></li><li aria-current="page">{data.product.name}</li></ol></nav>
       {sections.map((section) => {
         switch (section.kind) {
           case "overview":
             return <div key={`${data.product.id}-${section.id}`}><OverviewSection reviewHref={reviewHref} data={data} galleryFit={section.payload.galleryFit} onAddToCart={onAddToCart} />
-              {navigation.length > 0 && <nav className="ysh-detail-nav" aria-label="상품 상세 목차">
+              {navigation.length > 0 && <nav className="productdetailpage-detail-nav" aria-label="상품 상세 목차">
                 {navigation.map((item) => <a key={item.id} href={`#${getSectionAnchor(item)}`}>{item.payload.title}</a>)}
               </nav>}</div>;
           case "features":
