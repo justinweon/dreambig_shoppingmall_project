@@ -1,21 +1,19 @@
 import { products as defaultProducts } from "@/util/data/products";
-import { productBanners, carouselItems, partnerLogos } from "@/util/data/home";
+import { productBanners, carouselItems } from "@/util/data/home";
 import type { Product } from "@/util/types/product";
-import type { ProductBannerData, CarouselItem, PartnerLogo } from "@/util/types/home";
+import type { ProductBannerData, CarouselItem } from "@/util/types/home";
 import ProductBanner from "./ProductBanner";
 import ProductCarousel from "./ProductCarousel";
-import PartnerLogoMarquee from "./PartnerLogoMarquee";
+import HunminJeongeumMarquee from "./HunminJeongeumMarquee";
 
 interface HomeThirdSectionProps {
   products?: readonly Product[];
   banners?: readonly ProductBannerData[];
   items?: readonly CarouselItem[];
-  logos?: readonly PartnerLogo[];
-  logoTitle?: string;
 }
 
 /** 양석호 담당 영역. 메인 담당자는 원하는 위치에서 이 컴포넌트 하나를 렌더링한다. */
-export default function HomeThirdSection({ products = defaultProducts, banners = productBanners, items = carouselItems, logos = partnerLogos, logoTitle }: HomeThirdSectionProps) {
+export default function HomeThirdSection({ products = defaultProducts, banners = productBanners, items = carouselItems }: HomeThirdSectionProps) {
   const product_by_id = new Map(products.map((product) => [product.id, product]));
   const entries = items.flatMap((item) => {
     const product = product_by_id.get(item.productId);
@@ -28,7 +26,7 @@ export default function HomeThirdSection({ products = defaultProducts, banners =
         return product ? <ProductBanner key={banner.id} banner={banner} product={product} /> : null;
       })}
       <ProductCarousel entries={entries} />
-      <PartnerLogoMarquee logos={logos} title={logoTitle} />
+      <HunminJeongeumMarquee />
     </div>
   );
 }

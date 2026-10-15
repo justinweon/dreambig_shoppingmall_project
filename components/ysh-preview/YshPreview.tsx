@@ -8,15 +8,9 @@ import { getProductDetailData } from "@/util/product";
 import { products } from "@/util/data/products";
 import { carouselItems } from "@/util/data/home";
 import { detailTemplates } from "@/util/data/detailTemplates";
-import type { PartnerLogo } from "@/util/types/home";
+import PreviewSectionNav from "./PreviewSectionNav";
 import type { AddToCartRequest } from "@/util/types/cart";
 
-const sample_logos: readonly PartnerLogo[] = [
-  { id: "sample-a", name: "샘플 로고 A", src: "/ysh-preview/sample-a.svg", row: 0 },
-  { id: "sample-b", name: "샘플 로고 B", src: "/ysh-preview/sample-b.svg", row: 0 },
-  { id: "sample-c", name: "샘플 로고 C", src: "/ysh-preview/sample-c.svg", row: 1 },
-  { id: "sample-d", name: "샘플 로고 D", src: "/ysh-preview/sample-d.svg", row: 1 },
-];
 
 export default function YshPreview() {
   const [view, setView] = useState("main");
@@ -40,6 +34,7 @@ export default function YshPreview() {
     <>
       <div className="mx-auto w-full max-w-7xl space-y-4 border-b px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold">양석호 담당 영역 미리보기</h1>
+        <PreviewSectionNav />
         <p className="text-sm leading-6 text-muted-foreground">메인 세 번째 영역과 상품 상세의 독립 확인 화면입니다. 상품 설명과 후기는 로컬 예시 데이터이며, 카트 응답은 저장 없이 시뮬레이션합니다.</p>
         <label className="inline-flex items-center gap-3">확인 영역
           <select value={view} onChange={(event) => setView(event.target.value)} className="min-h-11 rounded border px-3">
@@ -58,7 +53,7 @@ export default function YshPreview() {
           <output className="w-full break-all rounded bg-stone-100 p-3 text-stone-900">시뮬레이션 요청 {request_log.length}회: {JSON.stringify(request_log.at(-1) ?? null)}</output>
         </div>}
       </div>
-      {view === "main" ? <main><HomeThirdSection products={products} items={carouselItems.slice(0, count)} logos={sample_logos} logoTitle="로고 모션 예제 — 실제 파트너 아님" /></main>
+      {view === "main" ? <main><HomeThirdSection products={products} items={carouselItems.slice(0, count)} /></main>
         : <ProductDetailPage data={data} template={detailTemplates[0]} onAddToCart={cart_mode === "unavailable" ? undefined : simulateCart} />}
     </>
   );
