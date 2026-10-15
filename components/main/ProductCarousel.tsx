@@ -45,7 +45,6 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible, paused, onP
   const locked_ref = useRef(false);
   const [moving, setMoving] = useState(false);
   const [transition, setTransition] = useState(true);
-  const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [touching, setTouching] = useState(false);
   const pointer_ref = useRef<{ id: number; x: number; y: number } | null>(null);
@@ -96,10 +95,10 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible, paused, onP
   }, [moving, finishTransition]);
 
   useEffect(() => {
-    if (!can_move || reduced_motion || paused || hovered || focused || touching) return;
+    if (!can_move || reduced_motion || paused || focused || touching) return;
     const timer = setInterval(() => { if (!document.hidden) move(1); }, Math.max(1000, autoplayMs));
     return () => clearInterval(timer);
-  }, [can_move, reduced_motion, paused, hovered, focused, touching, autoplayMs, move]);
+  }, [can_move, reduced_motion, paused, focused, touching, autoplayMs, move]);
 
   useEffect(() => () => { if (click_timer_ref.current) clearTimeout(click_timer_ref.current); }, []);
 
@@ -109,11 +108,10 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible, paused, onP
       ...Array.from({ length: visible }, (_, i) => ({ entry: entries[i % count], key: `after-${i}` }))]
     : entries.map((entry) => ({ entry, key: entry.item.id }));
   const active_index = wrapIndex(index, count);
-  const auto_running = can_move && !reduced_motion && !paused && !hovered && !focused && !touching;
+  const auto_running = can_move && !reduced_motion && !paused && !focused && !touching;
 
   return (
     <section aria-label={title} aria-roledescription="캐러셀" className="ysh-product-carousel"
-      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
       onFocusCapture={() => setFocused(true)}
       onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
       <h2 className="ysh-carousel-title">{title}</h2>

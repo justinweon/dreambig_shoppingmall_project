@@ -57,7 +57,7 @@
 .ysh-carousel-controls button:hover { background: #3c3c3c; color: white; }.ysh-carousel-controls button:focus-visible { outline: 2px solid white; outline-offset: 3px; }
 .ysh-carousel-controls button:disabled { opacity: .4; cursor: default; }
 .ysh-carousel-position { font-size: 12px; color: #aaa; margin-right: 6px; font-variant-numeric: tabular-nums; }
-.ysh-carousel-next svg { position: absolute; inset: 0; width: 44px; height: 44px; transform: rotate(-90deg); }
+.ysh-carousel-next .ysh-carousel-progress { position: absolute; inset: 0; width: 44px; height: 44px; transform: rotate(-90deg); }
 .ysh-carousel-next circle { fill: none; stroke: #8bdb38; stroke-width: 3; stroke-dasharray: 126; stroke-dashoffset: 126; animation: ysh-autoplay-progress linear infinite; }
 @keyframes ysh-autoplay-progress { to { stroke-dashoffset: 0; } }
 @media(max-width: 600px) {
