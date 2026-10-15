@@ -26,6 +26,18 @@ export interface ProductDetailConfig {
   readonly templateId: string;
   readonly images: readonly DetailImage[];
   readonly specifications: readonly ProductSpecification[];
+  readonly summary: string;
+  readonly highlights: readonly string[];
+  readonly features: readonly ProductFeature[];
+  readonly notice: string;
+}
+
+/** 설명 사진은 갤러리 사진과 별도로 배정한다. */
+export interface ProductFeature {
+  readonly id: string;
+  readonly title: string;
+  readonly points: readonly string[];
+  readonly image: DetailImage;
 }
 
 /** 조회 함수가 상품, 설정, 리뷰를 조합한 화면 전달 객체. 별도로 저장하지 않는다. */
@@ -37,6 +49,16 @@ export interface ProductDetailData {
   readonly images: readonly DetailImage[];
   readonly specifications: readonly ProductSpecification[];
   readonly reviews: readonly ProductReview[];
+  readonly summary: string;
+  readonly highlights: readonly string[];
+  readonly features: readonly ProductFeature[];
+  readonly notice: string;
+}
+
+export interface FeaturesSectionTemplate {
+  readonly id: string;
+  readonly kind: "features";
+  readonly payload: { readonly title: string };
 }
 
 /** 상세 상단: 갤러리와 상품 정보, 구매 영역의 묶음. */
@@ -63,6 +85,7 @@ export interface ReviewsSectionTemplate {
 // kind는 컴포넌트 종류, id는 템플릿 안에서 유일한 React key다.
 export type DetailSection =
   | OverviewSectionTemplate
+  | FeaturesSectionTemplate
   | SpecificationsSectionTemplate
   | ReviewsSectionTemplate;
 

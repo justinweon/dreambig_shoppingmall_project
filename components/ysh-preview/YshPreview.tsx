@@ -10,7 +10,6 @@ import { carouselItems } from "@/util/data/home";
 import { detailTemplates } from "@/util/data/detailTemplates";
 import type { PartnerLogo } from "@/util/types/home";
 import type { AddToCartRequest } from "@/util/types/cart";
-import portrait from "@/shared/asset/king_sejong.png";
 
 const sample_logos: readonly PartnerLogo[] = [
   { id: "sample-a", name: "샘플 로고 A", src: "/ysh-preview/sample-a.svg", row: 0 },
@@ -28,10 +27,7 @@ export default function YshPreview() {
   const [cart_mode, setCartMode] = useState("unavailable");
   const [request_log, setRequestLog] = useState<AddToCartRequest[]>([]);
   const base = getProductDetailData(product_id)!;
-  const data = { ...base, reviews: base.reviews.slice(0, review_count), images: empty_images ? [] : [
-    ...base.images,
-    { id: `${product_id}-illustration`, src: portrait, alt: "갤러리 검증용 캐릭터 일러스트" },
-  ] };
+  const data = { ...base, reviews: base.reviews.slice(0, review_count), images: empty_images ? [] : base.images };
 
   async function simulateCart(request: AddToCartRequest): Promise<CartAddResult> {
     setRequestLog((log) => [...log, request]);
@@ -44,7 +40,7 @@ export default function YshPreview() {
     <>
       <div className="mx-auto w-full max-w-7xl space-y-4 border-b px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold">양석호 담당 영역 미리보기</h1>
-        <p className="text-sm leading-6 text-muted-foreground">메인 세 번째 영역과 상품 상세의 독립 확인 화면입니다. 아래 로고와 추가 갤러리 이미지는 검증용이며, 카트 응답은 저장 없이 시뮬레이션합니다.</p>
+        <p className="text-sm leading-6 text-muted-foreground">메인 세 번째 영역과 상품 상세의 독립 확인 화면입니다. 상품 설명과 후기는 로컬 예시 데이터이며, 카트 응답은 저장 없이 시뮬레이션합니다.</p>
         <label className="inline-flex items-center gap-3">확인 영역
           <select value={view} onChange={(event) => setView(event.target.value)} className="min-h-11 rounded border px-3">
             <option value="main">메인 세 번째 영역</option><option value="detail">상품 상세</option>
@@ -55,7 +51,7 @@ export default function YshPreview() {
             {[0, 1, 3, 6].map((n) => <option key={n} value={n}>{n}개</option>)}
           </select>
         </label> : <div className="flex flex-wrap items-center gap-4 text-sm">
-          <label>상품 <select value={product_id} onChange={(event) => setProductId(Number(event.target.value))} className="min-h-11 rounded border px-3"><option value={101}>키링</option><option value={102}>머그컵</option></select></label>
+          <label>상품 <select value={product_id} onChange={(event) => setProductId(Number(event.target.value))} className="min-h-11 rounded border px-3">{products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>
           <label>리뷰 수 <select value={review_count} onChange={(event) => setReviewCount(Number(event.target.value))} className="min-h-11 rounded border px-3">{[0, 4, 5].map((n) => <option key={n} value={n}>{n}개</option>)}</select></label>
           <label className="inline-flex min-h-11 items-center gap-2"><input type="checkbox" checked={empty_images} onChange={(event) => setEmptyImages(event.target.checked)} />빈 갤러리</label>
           <label>카트 응답 <select value={cart_mode} onChange={(event) => setCartMode(event.target.value)} className="min-h-11 rounded border px-3"><option value="unavailable">미연결</option><option value="success">성공 예제</option><option value="failure">실패 예제</option><option value="throw">예외 예제</option></select></label>

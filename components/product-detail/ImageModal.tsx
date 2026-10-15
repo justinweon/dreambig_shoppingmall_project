@@ -47,7 +47,7 @@ export default function ImageModal({
   return (
     <dialog
       ref={dialogRef}
-      aria-label="리뷰 사진 확대"
+      aria-label="사진 확대"
       className="m-auto max-h-[90vh] max-w-[90vw] rounded-lg p-0 backdrop:bg-black/70"
       onCancel={(event) => {
         // Escape도 부모 상태를 변경하는 닫기 흐름으로 통일한다.

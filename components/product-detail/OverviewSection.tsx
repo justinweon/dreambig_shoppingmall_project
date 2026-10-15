@@ -29,7 +29,7 @@ export default function OverviewSection({ data, galleryFit = "contain", onAddToC
   return (
     <section
       aria-label="상품 정보와 구매"
-      className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12"
+      className="ysh-overview"
     >
       <div className="min-w-0">
         <ProductGallery
@@ -41,13 +41,14 @@ export default function OverviewSection({ data, galleryFit = "contain", onAddToC
       </div>
 
       <div className="min-w-0 space-y-8">
-        <ProductInfo product={data.product} currency={data.currency} />
+        <ProductInfo product={data.product} currency={data.currency} summary={data.summary} highlights={data.highlights} reviews={data.reviews} />
         <ProductPurchasePanel
           productId={data.product.id}
           quantity={quantity}
           onQuantityChange={setQuantity}
           onAddToCart={onAddToCart ? handleAddToCart : undefined}
         />
+        <p className="ysh-product-notice">{data.notice}</p>
       </div>
     </section>
   );

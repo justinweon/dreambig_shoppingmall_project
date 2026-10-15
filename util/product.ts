@@ -26,6 +26,10 @@ export function getProductDetailData(productId: ProductId): ProductDetailData | 
       { id: `${product.id}-main`, src: product.imageUrl, alt: `${product.name} 상품 이미지` },
     ],
     specifications: config.specifications,
+    summary: config.summary,
+    highlights: config.highlights,
+    features: config.features,
+    notice: config.notice,
     reviews: productReviews.filter((review) => review.productId === productId),
   };
 }

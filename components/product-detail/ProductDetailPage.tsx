@@ -6,6 +6,9 @@ import OverviewSection from "./OverviewSection";
 import ProductSpecifications from "./ProductSpecifications";
 import ReviewsSection from "./ReviewsSection";
 import type { AddToCartHandler } from "./cartConnection";
+import ProductFeatures from "./ProductFeatures";
+import Link from "next/link";
+import "./productDetail.css";
 
 interface ProductDetailPageProps {
   data: ProductDetailData;
@@ -34,11 +37,19 @@ export default function ProductDetailPage({ data, template, onAddToCart }: Produ
   //}).format(product.price);
 
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-12 px-4 py-8 sm:px-6 lg:space-y-20 lg:px-8 lg:py-12">
+    <main className="ysh-product-page"><div className="ysh-detail-inner">
+      <nav aria-label="현재 위치" className="ysh-breadcrumbs"><ol><li><Link href="/">홈</Link></li><li><Link href="/product">상품</Link></li><li aria-current="page">{data.product.name}</li></ol></nav>
       {template.sections.map((section) => {
         switch (section.kind) {
           case "overview":
-            return <OverviewSection key={`${data.product.id}-${section.id}`} data={data} galleryFit={section.payload.galleryFit} onAddToCart={onAddToCart} />;
+            return <div key={`${data.product.id}-${section.id}`}><OverviewSection data={data} galleryFit={section.payload.galleryFit} onAddToCart={onAddToCart} />
+              <nav className="ysh-detail-nav" aria-label="상품 상세 목차">
+                {data.features.length > 0 && <a href="#product-features">상품 설명</a>}
+                {data.specifications.length > 0 && <a href="#product-specifications">상품 사양</a>}
+                <a href="#product-reviews">구매 후기</a>
+              </nav></div>;
+          case "features":
+            return <ProductFeatures key={section.id} title={section.payload.title} features={data.features} />;
           case "specifications":
             return <ProductSpecifications key={section.id} title={section.payload.title} specifications={data.specifications} />;
           case "reviews":
@@ -52,6 +63,6 @@ export default function ProductDetailPage({ data, template, onAddToCart }: Produ
             );
         }
       })}
-    </main>
+    </div></main>
   );
 }

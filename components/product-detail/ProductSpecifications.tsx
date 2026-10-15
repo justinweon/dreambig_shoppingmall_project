@@ -11,19 +11,19 @@ export default function ProductSpecifications({ title, specifications }: Product
   }
 
   return (
-    <section aria-label={title}>
-      <h2 className="mb-5 text-xl font-bold sm:text-2xl">{title}</h2>
+    <section id="product-specifications" aria-label={title} className="ysh-detail-specs">
+      <h2>{title}</h2>
 
-      <dl>
+      <ul className="ysh-spec-list">
         {specifications.map((specification, index) => (
-          <div key={index} className="grid gap-2 border-b py-4 sm:grid-cols-[1fr_2fr]">
-            <dt className="font-semibold">{specification.label}</dt>
-            <dd className="mt-1 whitespace-pre-wrap break-words">
+          <li key={index}>
+            <strong>{specification.label}</strong>
+            <span className="whitespace-pre-wrap break-words">
               {specification.value}
-            </dd>
-          </div>
+            </span>
+          </li>
         ))}
-      </dl>
+      </ul>
     </section>
   );
 }
