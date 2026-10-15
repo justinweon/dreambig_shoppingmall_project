@@ -13,7 +13,7 @@
 | 홍정기 / 메인 첫 영역 | `data/products.ts` | 상품을 노출할 때 같은 원본 사용 |
 | 원정린 / 공통 헤더와 두 번째 영역 | `types/product.ts`, `types/cart.ts` | 상품을 노출할 때의 공통 타입 참고. 헤더 카트 개수는 카트 저장소와 연결 |
 | 양석호 / 상품 상세 | `data/productDetails.ts`, `data/reviews.ts`, `data/detailTemplates.ts`, `types/detail.ts`, `product.ts` | 상품 ID로 상세 정보 조회, 섹션 구성, 사양과 리뷰 |
-| 양석호 / 메인 세 번째 영역 | `data/home.ts`, `types/home.ts`, `data/products.ts` | 배너, 캐러셀, 파트너 로고 |
+| 양석호 / 메인 세 번째 영역 | `data/home.ts`, `types/home.ts`, `data/products.ts` | 배너, 캐러셀, 훈민정음 글자 |
 | 장바구니 담당자 / 이름 확인 필요 | `types/cart.ts`, `data/products.ts` | 상품 ID와 수량, 공통 상품 조회. 저장소 구현은 별도 |
 
 파일 주석의 관리 담당과 사용 담당은 구분한다. 원정린 담당 화면의 문구나 내비게이션 구조를 이 데이터 작업에서 변경하지 않는다.
@@ -25,7 +25,7 @@ util/
   types/
     product.ts          공통 상품, 통화, 이미지 타입
     detail.ts           상세 설정, 사양, 리뷰, 템플릿, 화면 전달 타입
-    home.ts             배너, 버튼 링크, 캐러셀, 파트너 로고 타입
+    home.ts             배너, 버튼 링크, 캐러셀 타입
     cart.ts             카트 항목과 담기 요청 타입
   data/
     products.ts         상품 정보 원본 6개
@@ -118,18 +118,11 @@ erDiagram
         object hoverImage
         string marketingDescription
     }
-    PARTNER_LOGO {
-        string id PK
-        string name
-        ImageSource src
-        string href
-        number row
-    }
 ```
 
 박스는 데이터의 역할을 나타내며, 별도 DB 테이블을 모두 만들라는 뜻은 아니다. 상품 이미지와 사양은 상세 설정 안의 배열, 리뷰 이미지는 리뷰 안의 배열, 섹션은 템플릿 안의 배열이다. 부모 관계는 중첩 구조로 표현하므로 각 항목에 외래 키를 중복 저장하지 않는다. 이미지와 섹션 ID는 부모 배열 안에서 유일해야 한다.
 
-상품당 상세 설정은 최대 하나다. 현재 6개 상품에는 모두 설정이 있다. `CartItem`은 사용자별 카트의 항목 계약이며 현재 카트 저장소는 구현하지 않았다. `PartnerLogo`는 상품과 독립되어 있다.
+상품당 상세 설정은 최대 하나다. 현재 6개 상품에는 모두 설정이 있다. `CartItem`은 사용자별 카트의 항목 계약이며 현재 카트 저장소는 구현하지 않았다.
 
 ## 데이터별 의미와 규칙
 
@@ -168,13 +161,13 @@ erDiagram
 
 ### ProductDetailData / 화면에 전달할 조합 결과
 
-별도의 원본 데이터나 DB 테이블이 아니다. `getProductDetailData(productId)`가 Product, 상세 설정, 리뷰를 조합해 만든다. 기존 컴포넌트 계약을 유지하기 위해 `currency`를 포함하지만 값은 항상 `product.currency`에서 가져온다. 템플릿 객체는 라우트에서 조회한 뒤 별도 `template` props로 전달한다.
+별도의 원본 데이터나 DB 테이블이 아니다. `getProductDetailData(productId)`가 Product, 상세 설정, 리뷰를 조합해 만든다. 통화는 별도 필드로 복사하지 않고 `product.currency`를 사용한다. 템플릿 객체는 라우트에서 조회한 뒤 별도 `template` props로 전달한다.
 
-### 메인 배너, 캐러셀, 로고
+### 메인 배너, 캐러셀, 훈민정음
 
 배너와 캐러셀은 `productId`로 상품을 참조한다. 배너 문구와 PC/모바일 이미지는 배너 전용이며, 캐러셀은 노출 순서와 선택적인 hover 이미지/소개만 가진다. 캐러셀 여섯 항목은 기존 상품 목록 순서를 유지한다.
 
-파트너 로고는 상품과 독립이며 `row`는 0 또는 1이다. 애니메이션용 복제는 렌더링에서 한다. 현재 배너와 로고는 빈 배열로 두었으며 노출 문구, 링크, 로고 등록은 메인 구현 때 진행한다. 첫 번째와 두 번째 영역의 데이터 요구사항은 아직 정의하지 않았으므로 임의로 필드를 만들지 않았다.
+파트너 로고 영역은 훈민정음 자음과 모음 두 줄로 교체했다. 글자 데이터는 `data/hunmin.ts`에서 관리하고 반복용 복제는 컴포넌트에서 만든다. 배너와 캐러셀 설정은 `data/home.ts`에 둔다.
 
 ### 장바구니 데이터 계약
 
