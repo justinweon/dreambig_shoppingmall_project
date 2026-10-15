@@ -1,14 +1,16 @@
 import { cn } from "@/shared/utils/cn";
-import { CrossIcon } from "@/lib/utils";
+import { CrossIcon, ReturnIcon } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { CardSimIcon, ChevronRight, VerifiedIcon } from "lucide-react";
 import { ShoppingBasket } from "lucide-react";
 import CartRecomms from "../cart/CartRecomms";
 import CartItem from "@/components/cart/CartItem";
 import { products } from "@/util/data/products";
 import { useCart } from "../cart/CartProvider";
 import { ShippingIcon } from "@/lib/utils";
+import { MdShoppingCartCheckout } from "react-icons/md";
+import { FaMoneyBill } from "react-icons/fa";
 
 
 
@@ -141,16 +143,16 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                 </div>
             )}
 
-            <div>
+            <div className="border-b">
                 <div className="text-2xl m-5">이런 제품도 있어요</div>
                 <CartRecomms/>
             </div>
             
-            <div className="grid grid-cols-2 col-start place-items-start text-gray-300 ">
-                <div className="flex gap-4 items-center"> <ShippingIcon/> <div>Free Shipping</div>  </div>
-                <div> 1-Year Warranty </div>
-                <div> 30-Day Returns </div>
-                <div> Secure Checkout </div>
+            <div className="grid grid-cols-2 col-start place-items-start text-gray-300 mt-10">
+                <div className="flex gap-4 items-center ml-[40px]"> <ShippingIcon/> <div>Free Shipping</div> </div>
+                <div className="flex gap-4 items-center ml-[40px]"> <VerifiedIcon/> <div>1-Year Warranty</div> </div>
+                <div className="flex gap-4 items-center ml-[40px]"> <ReturnIcon/> <div>30-Day Returns</div> </div>
+                <div className="flex gap-4 items-center ml-[40px]"> <FaMoneyBill/> <div>Checkout</div> </div>
             </div>
             
         </dialog>
