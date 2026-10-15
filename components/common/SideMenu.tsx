@@ -8,6 +8,8 @@ import CartRecomms from "../cart/CartRecomms";
 import CartItem from "@/components/cart/CartItem";
 import { products } from "@/util/data/products";
 import { useCart } from "../cart/CartProvider";
+import { ShippingIcon } from "@/lib/utils";
+
 
 
 
@@ -21,7 +23,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
 
     const dialogRef = useRef<HTMLDialogElement>(null);
 
-    const { items } = useCart();
+    const { items, updateQuantity } = useCart();
 
     const product_num = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -44,12 +46,12 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
             aria-labelledby="cart-title"
             onClose={() => setIsCartOpen(false)}
             className="
-      fixed inset-y-0 right-0 left-auto m-0
-      h-dvh max-h-none w-[480px] max-w-full
-      overflow-y-auto border-0 bg-white p-0 text-black
-      backdrop:bg-black/20 backdrop:backdrop-blur-sm
-      [&_button]:cursor-pointer
-    "
+        fixed inset-y-0 right-0 left-auto m-0
+        h-dvh max-h-none w-[480px] max-w-full
+        overflow-y-auto border-0 bg-white p-0 text-black
+        backdrop:bg-black/20 backdrop:backdrop-blur-sm
+        [&_button]:cursor-pointer
+        "
         >
             <div className="flex justify-between border-b border-black">
                 <div
@@ -71,7 +73,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
             w-[28px] h-[28px] mr-[20px]
             origin-center transition-transform duration-200 ease-in-out
             ${isRotated ? "rotate-90" : "rotate-0"}
-          `}
+            `}
                     />
                 </button>
             </div>
@@ -94,7 +96,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
             bg-[#7DDD41] text-black hover:bg-[#7DDD41]
             transition-[width] duration-300 ease-in-out
             hover:w-[230px] focus-visible:w-[230px]
-          "
+            "
                     >
                         <span className="whitespace-nowrap">
                             Continue Shopping
@@ -103,12 +105,12 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                         <span
                             aria-hidden="true"
                             className="
-              inline-block w-0 overflow-hidden opacity-0
-              transition-all duration-300 ease-in-out
-              group-hover:ml-2 group-hover:w-4 group-hover:opacity-100
-              group-focus-visible:ml-2
-              group-focus-visible:w-4
-              group-focus-visible:opacity-100
+                inline-block w-0 overflow-hidden opacity-0
+                transition-all duration-300 ease-in-out
+                group-hover:ml-2 group-hover:w-4 group-hover:opacity-100
+                group-focus-visible:ml-2
+                group-focus-visible:w-4
+                group-focus-visible:opacity-100
             "
                         >
                             <ChevronRight />
@@ -131,6 +133,8 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                                 name={product.name}
                                 price={product.price}
                                 imageUrl={product.imageUrl}
+                                quantity={item.quantity}
+                                onQuantityChange={(q) => updateQuantity(item.productId, q)}
                             />
                         );
                     })}
@@ -138,9 +142,17 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
             )}
 
             <div>
-                <div className="text-2xl m-5">choose your setup</div>
-                <CartRecomms />
+                <div className="text-2xl m-5">이런 제품도 있어요</div>
+                <CartRecomms/>
             </div>
+            
+            <div className="grid grid-cols-2 col-start place-items-start text-gray-300 ">
+                <div className="flex gap-4 items-center"> <ShippingIcon/> <div>Free Shipping</div>  </div>
+                <div> 1-Year Warranty </div>
+                <div> 30-Day Returns </div>
+                <div> Secure Checkout </div>
+            </div>
+            
         </dialog>
     );
 }

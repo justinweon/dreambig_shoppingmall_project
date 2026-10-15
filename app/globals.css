@@ -128,3 +128,23 @@
     @apply font-sans;
   }
 }
+
+/* 오른쪽에서 슬라이드 인/아웃 */
+dialog {
+  transform: translateX(100%);
+  transition:
+    transform 0.3s ease-in-out,
+    overlay 0.3s ease-in-out allow-discrete,
+    display 0.3s ease-in-out allow-discrete;
+}
+
+dialog[open] {
+  transform: translateX(0);
+}
+
+/* 열릴 때 시작 상태 */
+@starting-style {
+  dialog[open] {
+    transform: translateX(100%);
+  }
+}
