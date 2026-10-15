@@ -10,14 +10,14 @@ import ProductFeatures from "../components/ProductFeatures";
 import Link from "next/link";
 import "../productdetailpage.css";
 import { getVisibleDetailSections, getSectionAnchor } from "../sectionModel";
+import { useCart } from "@/components/cart/CartProvider";
 
 interface ProductDetailPageProps {
   data: ProductDetailData;
   template: DetailTemplate;
-  onAddToCart?: AddToCartHandler;
 }
 
-export default function ProductDetailPage({ data, template, onAddToCart }: ProductDetailPageProps) {
+export default function ProductDetailPage({ data, template, }: ProductDetailPageProps) {
   // 가격 숫자를 통화 형식의 문자열로 바꾸는 코드
   // 달러 → "$8,000.00"
   //new Intl.NumberFormat("en-US", {
@@ -41,6 +41,7 @@ export default function ProductDetailPage({ data, template, onAddToCart }: Produ
   const navigation = sections.filter((section) => section.kind !== "overview");
   const reviewSection = sections.find((section) => section.kind === "reviews");
   const reviewHref = reviewSection ? `#${getSectionAnchor(reviewSection)}` : undefined;
+  const { addItem } = useCart();
 
   return (
     <main className="productdetailpage"><div className="productdetailpage-detail-inner">
@@ -48,7 +49,13 @@ export default function ProductDetailPage({ data, template, onAddToCart }: Produ
       {sections.map((section) => {
         switch (section.kind) {
           case "overview":
-            return <div key={`${data.product.id}-${section.id}`}><OverviewSection reviewHref={reviewHref} data={data} galleryFit={section.payload.galleryFit} onAddToCart={onAddToCart} />
+            return <div key={`${data.product.id}-${section.id}`}>
+              <OverviewSection
+                reviewHref={reviewHref}
+                data={data}
+                galleryFit={section.payload.galleryFit}
+                onAddToCart={addItem}
+              />
               {navigation.length > 0 && <nav className="productdetailpage-detail-nav" aria-label="상품 상세 목차">
                 {navigation.map((item) => <a key={item.id} href={`#${getSectionAnchor(item)}`}>{item.payload.title}</a>)}
               </nav>}</div>;
