@@ -35,11 +35,11 @@ export default function Header() {
               <button>About Sejong</button>
               <Link
               href="/product"
-                // type="button"
-                // aria-expanded={isOpen}
-                // aria-controls="header-product-menu"
-                // onMouseEnter={() => setIsOpen(true)}
-                // onClick={() => setIsOpen(true)}
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls="header-product-menu"
+                onMouseEnter={() => setIsOpen(true)}
+                onClick={() => setIsOpen(true)}
               >
                 Product
               </Link>
