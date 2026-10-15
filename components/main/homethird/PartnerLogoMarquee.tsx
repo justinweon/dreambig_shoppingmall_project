@@ -4,7 +4,7 @@ import { useState, type CSSProperties } from "react";
 import Image from "next/image";
 import type { PartnerLogo } from "@/util/types/home";
 import useReducedMotion from "./useReducedMotion";
-import "./homeThird.css";
+import "./homethird.css";
 
 interface PartnerLogoMarqueeProps {
   logos: readonly PartnerLogo[];
@@ -18,7 +18,7 @@ export default function PartnerLogoMarquee({ logos, title = "함께하는 브랜
   const reduced_motion = useReducedMotion();
   if (logos.length === 0) return null;
   return (
-    <section aria-label={title} className={`ysh-marquee ${paused || touching ? "ysh-marquee-paused" : ""} rounded-3xl bg-stone-50 py-10 text-stone-950`}
+    <section aria-label={title} className={`homethird-marquee ${paused || touching ? "homethird-marquee-paused" : ""} rounded-3xl bg-stone-50 py-10 text-stone-950`}
       onPointerDown={() => setTouching(true)} onPointerUp={() => setTouching(false)} onPointerCancel={() => setTouching(false)} onPointerLeave={() => setTouching(false)}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 px-6 sm:px-10">
         <h2 className="text-xl font-semibold">{title}</h2>
@@ -30,13 +30,13 @@ export default function PartnerLogoMarquee({ logos, title = "함께하는 브랜
       {([0, 1] as const).map((row) => {
         const row_logos = logos.filter((logo) => logo.row === row);
         if (row_logos.length === 0) return null;
-        return <div key={row} className="ysh-logo-row">
-          <div className="ysh-logo-track" style={{ "--duration": `${Math.max(5, rowDurationSeconds[row])}s` } as CSSProperties}>
-            {[false, true].map((clone) => <div key={String(clone)} className={`ysh-logo-group ${clone ? "ysh-logo-clone" : ""}`} aria-hidden={clone}>
+        return <div key={row} className="homethird-logo-row">
+          <div className="homethird-logo-track" style={{ "--duration": `${Math.max(5, rowDurationSeconds[row])}s` } as CSSProperties}>
+            {[false, true].map((clone) => <div key={String(clone)} className={`homethird-logo-group ${clone ? "homethird-logo-clone" : ""}`} aria-hidden={clone}>
               {row_logos.map((logo) => {
                 const content = <Image src={logo.src} alt={clone ? "" : logo.name} width={144} height={72} className="max-h-18 w-full object-contain" />;
-                return logo.href ? <a key={logo.id} className="ysh-logo rounded focus-visible:outline-2" href={logo.href} tabIndex={clone ? -1 : 0}>{content}</a>
-                  : <span key={logo.id} className="ysh-logo">{content}</span>;
+                return logo.href ? <a key={logo.id} className="homethird-logo rounded focus-visible:outline-2" href={logo.href} tabIndex={clone ? -1 : 0}>{content}</a>
+                  : <span key={logo.id} className="homethird-logo">{content}</span>;
               })}
             </div>)}
           </div>

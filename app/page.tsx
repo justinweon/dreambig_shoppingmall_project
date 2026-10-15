@@ -1,4 +1,4 @@
-import HomeThirdSection from "@/components/main/HomeThirdSection";
+import HomeThirdSection from "@/components/main/homethird/HomeThirdSection";
 
 export default function Home() {
   return (

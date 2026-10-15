@@ -20,7 +20,7 @@ export default function HomeThirdSection({ products = defaultProducts, banners =
     return product ? [{ item, product }] : [];
   });
   return (
-    <div className="ysh-home-third">
+    <div className="homethird">
       {banners.map((banner) => {
         const product = product_by_id.get(banner.productId);
         return product ? <ProductBanner key={banner.id} banner={banner} product={product} /> : null;

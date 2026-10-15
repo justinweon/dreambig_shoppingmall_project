@@ -5,7 +5,7 @@ import ProductCarouselCard, { type CarouselEntry } from "./ProductCarouselCard";
 import useReducedMotion from "./useReducedMotion";
 import { getCardWidth, getSwipeDirection, getVisibleCount, wrapIndex } from "./carouselModel";
 import ProductCarouselControls from "./ProductCarouselControls";
-import "./homeThird.css";
+import "./homethird.css";
 
 interface ProductCarouselProps {
   entries: readonly CarouselEntry[];
@@ -110,10 +110,10 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible }: Required<
   const auto_running = can_move && !reduced_motion && !focused && !touching;
 
   return (
-    <section aria-label={title} aria-roledescription="캐러셀" className="ysh-product-carousel"
+    <section aria-label={title} aria-roledescription="캐러셀" className="homethird-product-carousel"
       onFocusCapture={() => setFocused(true)}
       onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
-      <h2 className="ysh-carousel-title">{title}</h2>
+      <h2 className="homethird-carousel-title">{title}</h2>
       {count === 0 ? <p className="rounded-2xl bg-stone-50 p-8 text-stone-600">표시할 상품이 없습니다.</p> : <div className="overflow-hidden" style={{ touchAction: "pan-y" }}
         onPointerDown={(event) => {
           if (!event.isPrimary || event.button !== 0) return;
@@ -143,7 +143,7 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible }: Required<
         onPointerLeave={() => { if (!suppress_click_ref.current) { pointer_ref.current = null; setTouching(false); } }}
         onClickCapture={(event) => { if (suppress_click_ref.current) { event.preventDefault(); event.stopPropagation(); suppress_click_ref.current = false; } }}
         onDragStart={(event) => event.preventDefault()}>
-        <div className="ysh-product-track"
+        <div className="homethird-product-track"
           style={{ transform: `translateX(${edge_offset - (can_move ? (index + visible) * stride : 0)}px)`, transition: transition && !reduced_motion ? "transform 350ms ease" : "none" }}
           onTransitionEnd={(event) => { if (event.target === event.currentTarget && event.propertyName === "transform" && moving) finishTransition(); }}>
           {slides.map(({ entry, key }, position) => {
