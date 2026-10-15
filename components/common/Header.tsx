@@ -5,6 +5,7 @@ import {useState} from "react";
 import Link from "next/link";
 import { LanguageIcon, SearchIcon, CartIcon, UserIcon} from "@/lib/utils";
 import SideMenu from "./SideMenu";
+import ProductList from "../product/ProductList";
 
 //상품데이터 가져오기
 import { products } from "@/util/data/products"
@@ -19,11 +20,11 @@ export default function Header() {
 
 const [isOpen, setIsOpen] = useState(false);
 const [isCartOpen, setIsCartOpen] = useState(false);
-
+console.log(products.length);
   return(
     <>
-    <header className="relative [&_button]:cursor-pointer [&_a]:cursor-pointer border-b border-black">
-      <div className ="flex justify-between h-[70px] items-center bg-white text-black" onMouseLeave={()=>setIsOpen(false)}>
+    <header className="relative [&_button]:cursor-pointer [&_a]:cursor-pointer border-b border-black" onMouseLeave={()=>setIsOpen(false)}>
+      <div className ="flex justify-between h-[70px] items-center bg-white text-black">
         <Link href="/" className='w-1/5'>로고</Link>
         <div className="grow">
           <nav className="flex justify-evenly">
@@ -56,7 +57,7 @@ const [isCartOpen, setIsCartOpen] = useState(false);
   }`}
 >
   <div className='flex justify-evenly'>
-    {products.length > 0 && products.map((item) => <ProductMenuItem key={`${item.id}`} {...item} /> )}
+    {products.length > 0 && products.map((item) => <ProductList key={`${item.id}`} {...item} /> )}
   </div>
 </div>
 </header>
@@ -66,28 +67,6 @@ const [isCartOpen, setIsCartOpen] = useState(false);
 )}
 
 
+function ProductMenuItem({ imageUrl, name }: ProductMenuItemProps) {
 
-// 목데이터 테스트2
-
-interface ProductMenuItemProps {
-  imageUrl: string;
-  name: string;
-  productId: number;
-}
-
-function ProductMenuItem({ imageUrl, name, productId }: ProductMenuItemProps) {
-  return (
-    <div className="flex flex-col items-center gap-4">
-      <Link href={`/product/${productId}`}>
-        <Image
-          src={imageUrl}
-          alt={name}
-          width={160}
-          height={160}
-          className="h-40 w-40 object-contain"
-        />
-        <p className="text-center font-medium">{name}</p>
-      </Link>
-    </div>
-  );
 }
