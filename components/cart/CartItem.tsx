@@ -31,6 +31,9 @@ export default function CartItem({
             </p>
         </div>
         
+        <div>
+            <button></button>
+        </div>
         </div>
     );
     }
