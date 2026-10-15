@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type PointerEvent,
+  type MouseEvent,
+} from "react";
 import ProductCarouselCard, { type CarouselEntry } from "./ProductCarouselCard";
 import useReducedMotion from "./useReducedMotion";
 import { getCardWidth, getSwipeDirection, getVisibleCount, wrapIndex } from "./carouselModel";
@@ -32,7 +39,12 @@ export default function ProductCarousel({ entries, title, autoplayMs = 6000 }: P
   );
 }
 
-function CarouselTrack({ entries, title, autoplayMs, width, visible }: Required<ProductCarouselProps> & { width: number; visible: number }) {
+interface CarouselTrackProps extends Required<ProductCarouselProps> {
+  width: number;
+  visible: number;
+}
+
+function CarouselTrack({ entries, title, autoplayMs, width, visible }: CarouselTrackProps) {
   const reduced_motion = useReducedMotion();
   const count = entries.length;
   const can_move = count > 1 && width > 0;
@@ -101,6 +113,47 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible }: Required<
 
   useEffect(() => () => { if (click_timer_ref.current) clearTimeout(click_timer_ref.current); }, []);
 
+  // 포인터 입력 처리는 JSX 밖에서 모아둔다.
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    if (!event.isPrimary || event.button !== 0) return;
+    suppress_click_ref.current = false;
+    pointer_ref.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    setTouching(true);
+  }
+
+  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
+    const start = pointer_ref.current;
+    if (
+      start && start.id === event.pointerId && can_move &&
+      getSwipeDirection(event.clientX - start.x, event.clientY - start.y)
+    ) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+      suppress_click_ref.current = true;
+    }
+  }
+
+  function handlePointerUp(event: PointerEvent<HTMLDivElement>) {
+    const start = pointer_ref.current;
+    if (start && start.id === event.pointerId) {
+      const direction = getSwipeDirection(event.clientX - start.x, event.clientY - start.y);
+      if (direction && can_move) {
+        move(direction);
+        suppress_click_ref.current = true;
+      }
+    }
+    pointer_ref.current = null;
+    setTouching(false);
+    if (click_timer_ref.current) clearTimeout(click_timer_ref.current);
+    click_timer_ref.current = setTimeout(() => { suppress_click_ref.current = false; }, 350);
+  }
+
+  function handleClickCapture(event: MouseEvent<HTMLDivElement>) {
+    if (!suppress_click_ref.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    suppress_click_ref.current = false;
+  }
+
   const slides = can_move
     ? [...Array.from({ length: visible }, (_, i) => ({ entry: entries[wrapIndex(i - visible, count)], key: `before-${i}` })),
       ...entries.map((entry) => ({ entry, key: entry.item.id })),
@@ -115,33 +168,12 @@ function CarouselTrack({ entries, title, autoplayMs, width, visible }: Required<
       onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
       <h2 className="homethird-carousel-title">{title}</h2>
       {count === 0 ? <p className="rounded-2xl bg-stone-50 p-8 text-stone-600">표시할 상품이 없습니다.</p> : <div className="overflow-hidden" style={{ touchAction: "pan-y" }}
-        onPointerDown={(event) => {
-          if (!event.isPrimary || event.button !== 0) return;
-          suppress_click_ref.current = false;
-          pointer_ref.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
-          setTouching(true);
-        }}
-        onPointerMove={(event) => {
-          const start = pointer_ref.current;
-          if (start && start.id === event.pointerId && can_move && getSwipeDirection(event.clientX - start.x, event.clientY - start.y)) {
-            event.currentTarget.setPointerCapture(event.pointerId);
-            suppress_click_ref.current = true;
-          }
-        }}
-        onPointerUp={(event) => {
-          const start = pointer_ref.current;
-          if (start && start.id === event.pointerId) {
-            const direction = getSwipeDirection(event.clientX - start.x, event.clientY - start.y);
-            if (direction && can_move) { move(direction); suppress_click_ref.current = true; }
-          }
-          pointer_ref.current = null;
-          setTouching(false);
-          if (click_timer_ref.current) clearTimeout(click_timer_ref.current);
-          click_timer_ref.current = setTimeout(() => { suppress_click_ref.current = false; }, 350);
-        }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
         onPointerCancel={() => { pointer_ref.current = null; setTouching(false); suppress_click_ref.current = false; }}
         onPointerLeave={() => { if (!suppress_click_ref.current) { pointer_ref.current = null; setTouching(false); } }}
-        onClickCapture={(event) => { if (suppress_click_ref.current) { event.preventDefault(); event.stopPropagation(); suppress_click_ref.current = false; } }}
+        onClickCapture={handleClickCapture}
         onDragStart={(event) => event.preventDefault()}>
         <div className="homethird-product-track"
           style={{ transform: `translateX(${edge_offset - (can_move ? (index + visible) * stride : 0)}px)`, transition: transition && !reduced_motion ? "transform 350ms ease" : "none" }}
