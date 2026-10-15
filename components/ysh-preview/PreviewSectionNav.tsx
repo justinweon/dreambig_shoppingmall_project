@@ -8,7 +8,7 @@ export default function PreviewSectionNav() {
       <li><Link href="/preview/ysh/banner">배너만</Link></li>
       <li><Link href="/preview/ysh/carousel">상품 캐러셀만</Link></li>
       <li><Link href="/preview/ysh/hunmin">훈민정음 모션만</Link></li>
-      {products.map((product) => <li key={product.id}><Link href={`/product/${product.id}`}>${product.name} 상세</Link></li>)}
+      {products.map((product) => <li key={product.id}><Link href={`/product/${product.id}`}>{product.name} 상세</Link></li>)}
     </ul>
   </nav>;
 }
