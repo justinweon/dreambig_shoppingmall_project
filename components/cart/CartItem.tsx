@@ -1,5 +1,7 @@
 import Image from "next/image";
 import type { ImageSource } from "@/util/types/product";
+import { Plus } from "lucide-react";
+import { Minus } from "lucide-react";
 
 interface CartItemProps {
     name: string;
@@ -32,7 +34,9 @@ export default function CartItem({
         </div>
         
         <div>
-            <button></button>
+            <button><Plus /></button>
+            <span></span>
+            <button><Minus /></button>
         </div>
         </div>
     );
