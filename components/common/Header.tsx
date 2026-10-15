@@ -21,6 +21,8 @@ type ProductMenuItemProps = Pick<Product, "id" | "imageUrl" | "name"> & {
 export default function Header() {
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { isCartOpen, setIsCartOpen } = useCart();
   console.log(products.length);
   return (
@@ -48,7 +50,7 @@ export default function Header() {
 
           <div className="flex w-50 ml-50 gap-2 ">
             <Link href=""><LanguageIcon /></Link>
-            <Link href=""><SearchIcon /></Link>
+            <button type="button" aria-label="검색" onClick={() => setIsSearchOpen((prev) => !prev)}><SearchIcon /></button>
             <Link href=""><UserIcon /></Link>
             <button type="button" aria-label="장바구니 열기" onClick={() => setIsCartOpen(true)}><CartIcon /></button>
           </div>
@@ -68,6 +70,40 @@ export default function Header() {
           </div>
         </div>
       </header>
+
+      {/* 검색바 */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out bg-white border-b border-black ${
+          isSearchOpen ? "max-h-20 py-3" : "max-h-0 py-0"
+        }`}
+      >
+        <form
+          className="flex items-center gap-2 max-w-xl mx-auto px-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            console.log("검색어:", searchQuery);
+          }}
+        >
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="검색어를 입력하세요..."
+            className="flex-1 border-b border-black outline-none py-1 text-sm bg-transparent"
+            autoFocus={isSearchOpen}
+          />
+          <button type="submit" className="text-sm font-medium">
+            검색
+          </button>
+          <button
+            type="button"
+            onClick={() => { setIsSearchOpen(false); setSearchQuery(""); }}
+            className="text-gray-400 hover:text-black text-lg leading-none"
+          >
+            ✕
+          </button>
+        </form>
+      </div>
 
       <SideMenu isCartOpen={isCartOpen} setIsCartOpen={setIsCartOpen} />
     </>
