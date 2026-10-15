@@ -6,12 +6,14 @@ import Link from "next/link";
 import { LanguageIcon, SearchIcon, CartIcon, UserIcon} from "@/lib/utils";
 import SideMenu from "./SideMenu";
 import ProductList from "../product/ProductList";
+import Image from "next/image";
+import sejongLogo from "@/shared/asset/sejong_logo.png";
+
 
 //상품데이터 가져오기
 import { products } from "@/util/data/products"
 // 양석호: 메뉴도 공통 상품의 ID와 이미지 타입을 그대로 사용한다.
 import type { Product } from "@/util/types/product";
-import Image from "next/image"
 
 type ProductMenuItemProps = Pick<Product, "id" | "imageUrl" | "name"> & {
   onSelect: () => void;
@@ -26,7 +28,7 @@ console.log(products.length);
     <>
     <header className="relative [&_button]:cursor-pointer [&_a]:cursor-pointer border-b border-black" onMouseLeave={()=>setIsOpen(false)}>
       <div className ="flex justify-between h-[70px] items-center bg-white text-black">
-        <Link href="/" className='w-1/5'>로고</Link>
+        <Link href="/" className='w-1/5'><Image src={sejongLogo} alt="logo" width={120} height={40} /></Link>
         <div className="grow">
           <nav className="flex justify-evenly">
             <button>About Sejong</button>
