@@ -1,9 +1,9 @@
-import Image from "next/image";
+import HomeThirdSection from "@/components/main/HomeThirdSection";
 
 export default function Home() {
   return (
-    <div>
-      안녕하세요
-    </div>
-    
-  )}
+    <main>
+      <HomeThirdSection />
+    </main>
+  );
+}
