@@ -1,21 +1,49 @@
 import type { ProductDetailConfig } from "../types/detail";
+import { productMedia } from "./productMedia";
 
-// 데이터 관리/사용: 양석호(상세). productId는 products.ts의 고정 ID를 참조한다.
-// 이름/가격/통화를 복사하지 않는다. images가 비어 있으면 조회 함수가 대표 이미지를 사용한다.
-// 사양이 비어 있으면 화면에서 사양 섹션을 생략할 수 있다.
-export const productDetailConfigs: readonly ProductDetailConfig[] = [
-  {
-    productId: 101,
-    templateId: "standard-product",
-    images: [],
-    specifications: [
-      { label: "데이터 구분", value: "화면 확인용 임시 사양" },
-      { label: "표시 예시", value: "실제 상품 사양은 팀 데이터로 교체합니다." },
-    ],
-  },
-  { productId: 102, templateId: "standard-product", images: [], specifications: [] },
-  { productId: 103, templateId: "standard-product", images: [], specifications: [] },
-  { productId: 104, templateId: "standard-product", images: [], specifications: [] },
-  { productId: 105, templateId: "standard-product", images: [], specifications: [] },
-  { productId: 106, templateId: "standard-product", images: [], specifications: [] },
-];
+// 양석호 담당 로컬 카탈로그. 판매 사양이 확정되기 전까지 예시 데이터임을 화면에 표시한다.
+// 이름/가격은 products.ts에서 조회하고, 상세 설명과 이미지 연결은 이 파일에 둔다.
+const detail_content = [
+  { id: 101, name: "키링", summary: "가방과 열쇠에 더하는 작은 세종 이야기.",
+    highlights: ["검은 익선관과 붉은 곤룡포의 세종 캐릭터", "투명한 윤곽 안에 담은 캐릭터 일러스트", "가방과 열쇠에 연결하는 링 형태", "앞면과 사용 장면을 각각 확인하는 상품 사진"],
+    title: "손끝에서 만나는 세종", points: ["책상 위에서 보던 캐릭터를 외출하는 순간에도 함께하세요.", "가방에 걸었을 때와 손에 들었을 때의 모습을 서로 다른 사진으로 확인할 수 있습니다."],
+    specs: [["디자인", "세종 캐릭터"], ["형태", "링 연결형 장식"], ["색상 구성", "블랙 / 레드 / 투명 계열"], ["구성 예시", "키링 1개"]] },
+  { id: 102, name: "머그컵", summary: "잠깐의 휴식에도 좋아하는 캐릭터와 함께.",
+    highlights: ["밝은 바탕에 배치한 세종 캐릭터", "손잡이가 있는 머그 형태", "책상과 티타임에 어울리는 디자인", "정면과 책상 위 연출 사진 제공"],
+    title: "책상 위, 작은 휴식", points: ["따뜻한 분위기의 책상 위에 세종 캐릭터를 놓아보세요.", "정면의 그림과 손잡이 방향은 갤러리에서 확인할 수 있습니다."],
+    specs: [["디자인", "세종 캐릭터"], ["형태", "손잡이형 머그"], ["색상 구성", "화이트 바탕 / 컬러 일러스트"], ["구성 예시", "머그컵 1개"]] },
+  { id: 103, name: "노트북 커버", summary: "매일 펼치는 작업 공간에 나만의 취향을.",
+    highlights: ["노트북 상판용 세종 캐릭터 디자인", "밝은 바탕과 선명한 일러스트", "상판과 실제 배치 모습을 제공하는 갤러리", "기기별 호환 규격은 구매 전 확인 필요"],
+    title: "일하는 공간에 더하는 표정", points: ["노트북을 닫았을 때에도 캐릭터가 보이는 구성을 담았습니다.", "기기 크기와 모서리 형태에 따라 호환 여부가 달라지므로 실제 규격 확정 후 선택하세요."],
+    specs: [["디자인", "세종 캐릭터"], ["적용 위치", "노트북 상판"], ["색상 구성", "아이보리 바탕 / 컬러 일러스트"], ["호환 기종", "규격 확정 후 안내"]] },
+  { id: 104, name: "마우스패드", summary: "작업하는 순간마다 시선이 머무는 작은 그림.",
+    highlights: ["세종 캐릭터가 담긴 사각형 디자인", "밝은 바탕과 어두운 테두리의 조합", "마우스와 함께 놓은 사용 장면 제공", "책상 위 배치를 확인하기 좋은 상품 사진"],
+    title: "익숙한 책상을 새롭게", points: ["키보드 옆 빈자리에 캐릭터 디자인을 더해보세요.", "마우스를 올려놓은 사진으로 책상 위 분위기를 살펴볼 수 있습니다."],
+    specs: [["디자인", "세종 캐릭터"], ["형태", "사각형"], ["색상 구성", "밝은 바탕 / 블랙 테두리"], ["구성 예시", "마우스패드 1개"]] },
+  { id: 105, name: "포토카드", summary: "좋아하는 표정을 한 장에 담아 간직하세요.",
+    highlights: ["세종 캐릭터 일러스트 카드", "세로형 레이아웃", "여백이 있는 밝은 바탕", "손에 든 모습과 별도 연출 이미지 제공"],
+    title: "한 장에 담은 이야기", points: ["책상 위나 소장 공간에 세종의 귀여운 표정을 더해보세요.", "앞면 디자인과 실제 연출 장면을 구분해 살펴볼 수 있습니다."],
+    specs: [["디자인", "세종 캐릭터"], ["형태", "세로형 카드"], ["색상 구성", "아이보리 바탕 / 컬러 일러스트"], ["구성 예시", "포토카드 1장"]] },
+  { id: 106, name: "아이맥", summary: "화면 안에서도 이어지는 세종 컬렉션.",
+    highlights: ["데스크톱 화면용 세종 캐릭터 연출", "밝은 배경의 캐릭터 구성", "모니터 정면과 공간 연출 사진", "판매 구성과 제공 방식은 확정 전"],
+    title: "화면 속 작은 동반자", points: ["데스크톱 공간에 세종 캐릭터가 놓인 모습을 확인해보세요.", "현재 상품명과 가격은 팀 공통 개발 데이터이며, 기기 판매 또는 파일 제공 여부는 아직 확정되지 않았습니다."],
+    specs: [["디자인", "세종 캐릭터 화면 연출"], ["적용 예시", "데스크톱 화면"], ["판매 구성", "확정 후 안내"], ["제공 방식", "확정 후 안내"]] },
+] as const;
+
+export const productDetailConfigs: readonly ProductDetailConfig[] = detail_content.map((entry) => ({
+  productId: entry.id,
+  collectionName: "DREAMBIG / SEJONG COLLECTION",
+  templateId: "standard-product",
+  summary: entry.summary,
+  highlights: entry.highlights,
+  images: productMedia[entry.id].gallery.map((src, i) => ({
+    id: `${entry.id}-gallery-${i + 1}`, src,
+    alt: `세종 ${entry.name} ${i === 0 ? "대표 이미지" : "사용 장면"}`,
+  })),
+  features: [{
+    id: `${entry.id}-story`, title: entry.title, points: entry.points,
+    image: { id: `${entry.id}-feature`, src: productMedia[entry.id].feature, alt: `세종 ${entry.name} 상세 연출` },
+  }],
+  specifications: entry.specs.map(([label, value]) => ({ label, value })),
+  notice: "현재 개발용 카탈로그입니다. 이미지와 구성은 연출 예시이며, 실제 규격과 판매 조건은 확정 후 안내합니다.",
+}));

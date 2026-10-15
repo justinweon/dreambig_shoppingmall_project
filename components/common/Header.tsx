@@ -9,12 +9,13 @@ import ProductList from "../product/ProductList";
 
 //상품데이터 가져오기
 import { products } from "@/util/data/products"
+// 양석호: 메뉴도 공통 상품의 ID와 이미지 타입을 그대로 사용한다.
+import type { Product } from "@/util/types/product";
 import Image from "next/image"
 
-interface ProductMenuItemProps {
-imageUrl: string;
-name: string;
-}
+type ProductMenuItemProps = Pick<Product, "id" | "imageUrl" | "name"> & {
+  onSelect: () => void;
+};
 
 export default function Header() {
 
@@ -29,8 +30,12 @@ console.log(products.length);
         <div className="grow">
           <nav className="flex justify-evenly">
             <button>About Sejong</button>
-            <button 
+            <button
+            type="button"
+            aria-expanded={isOpen}
+            aria-controls="header-product-menu"
             onMouseEnter = {() => setIsOpen(true)}
+            onClick = {() => setIsOpen(true)}
             >
               Product
             </button>
@@ -43,11 +48,12 @@ console.log(products.length);
           <Link href=""><LanguageIcon/></Link>
           <Link href=""><SearchIcon/></Link>
           <Link href=""><UserIcon/></Link>
-          <button type="button" onClick={()=> setIsCartOpen(true)}><CartIcon/></button>
+          <button type="button" aria-label="장바구니 열기" onClick={()=> setIsCartOpen(true)}><CartIcon/></button>
         </div>
         
     </div>
     <div 
+    id="header-product-menu"
     aria-hidden={!isOpen}
     inert={!isOpen}
     className={`absolute top-full inset-x-0 z-50 bg-white text-black px-8 py-10 border-t border-gray-200 transition-opacity duration-200 ease-out ${
@@ -57,7 +63,7 @@ console.log(products.length);
   }`}
 >
   <div className='flex justify-evenly'>
-    {products.length > 0 && products.map((item) => <ProductList key={`${item.id}`} {...item} /> )}
+    {products.length > 0 && products.map((item) => <ProductMenuItem key={item.id} {...item} onSelect={() => setIsOpen(false)} /> )}
   </div>
 </div>
 </header>
