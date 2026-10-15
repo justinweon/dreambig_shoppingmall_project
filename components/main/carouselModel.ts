@@ -4,8 +4,10 @@ export function wrapIndex(index: number, count: number) {
 }
 
 export function getVisibleCount(width: number) {
-  return width >= 960 ? 3 : width >= 600 ? 2 : 1;
+  return Math.ceil(width / (getCardWidth(width) + 14)) + 1;
 }
+
+export function getCardWidth(width: number) { return width < 600 ? 220 : 280; }
 
 export function getSwipeDirection(dx: number, dy: number): -1 | 0 | 1 {
   if (Math.abs(dx) < 40 || Math.abs(dx) <= Math.abs(dy) * 1.2) return 0;
