@@ -50,3 +50,8 @@
   .ysh-spec-list li { grid-template-columns: 1fr 1.6fr; padding: 16px; font-size: 14px; }
   .ysh-review-list > li { grid-template-columns: 1fr; gap: 16px; }
 }
+
+.ysh-rating-stars { position: relative; display: inline-flex; }
+.ysh-rating-stars .ysh-rating-empty { display: flex; color: #d6d3d1; }
+.ysh-rating-stars .ysh-rating-fill { position: absolute; inset: 0 auto 0 0; display: flex; overflow: hidden; color: #c28a28; }
+.ysh-rating-stars svg { flex-shrink: 0; }

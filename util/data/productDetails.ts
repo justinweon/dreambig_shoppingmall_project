@@ -32,6 +32,7 @@ const detail_content = [
 
 export const productDetailConfigs: readonly ProductDetailConfig[] = detail_content.map((entry) => ({
   productId: entry.id,
+  collectionName: "DREAMBIG / SEJONG COLLECTION",
   templateId: "standard-product",
   summary: entry.summary,
   highlights: entry.highlights,

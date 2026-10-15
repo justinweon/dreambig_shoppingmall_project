@@ -1,9 +1,9 @@
 import Image from "next/image";
 import type { ProductFeature } from "@/util/types/detail";
 
-export default function ProductFeatures({ title, features }: { title: string; features: readonly ProductFeature[] }) {
+export default function ProductFeatures({ id, title, features }: { id: string; title: string; features: readonly ProductFeature[] }) {
   if (!features.length) return null;
-  return <section id="product-features" aria-label={title} className="ysh-detail-features">
+  return <section id={id} aria-label={title} className="ysh-detail-features">
     <h2 className="sr-only">{title}</h2>
     <ul className="ysh-feature-list">
       {features.map((feature) => <li key={feature.id} className="ysh-feature">

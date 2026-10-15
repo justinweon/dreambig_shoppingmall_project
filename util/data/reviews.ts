@@ -2,6 +2,8 @@ import type { ProductReview } from "../types/detail";
 import { productMedia } from "./productMedia";
 
 // 실제 구매 후기가 아닌 로컬 개발 예제. API 연결 시 상품 ID로 서버 리뷰를 조회한다.
+export const exampleReviewNotice = "아래 후기는 화면 확인용 예시이며 실제 구매 후기가 아닙니다.";
+
 const examples = [
   { id: 101, name: "키링", notes: ["가방에 연결한 모습을 확인하는 사진 후기 예시입니다.", "캐릭터의 표정과 윤곽을 살펴보는 후기 예시입니다.", "고리와 연결 부분에 대한 의견을 표시하는 예시입니다.", "사진 없는 짧은 후기를 표시합니다.", "다섯 번째 후기입니다. 다음 페이지 이동을 확인할 수 있습니다."] },
   { id: 102, name: "머그컵", notes: ["책상 위 머그컵 배치를 이야기하는 후기 예시입니다.", "손잡이 방향과 그림 배치에 대한 예시입니다.", "컵 디자인에 대한 짧은 의견 예시입니다.", "사진 없는 후기를 확인합니다.", "두 번째 리뷰 페이지의 머그컵 예시입니다."] },
@@ -15,6 +17,7 @@ export const productReviews: readonly ProductReview[] = examples.flatMap((entry)
   const review_photo = productMedia[entry.id].review;
   return {
     id: `demo-${entry.id}-${index + 1}`, productId: entry.id,
+    isExample: true,
     authorName: `예시 작성자 ${index + 1}`, rating: ratings[index], body,
     createdAt: `2026-10-${String(14 - index).padStart(2, "0")}T00:00:00.000Z`,
     images: index === 0 && review_photo ? [{ id: `${entry.id}-review-photo`, src: review_photo, alt: `${entry.name} 예시 후기 사진` }] : [],

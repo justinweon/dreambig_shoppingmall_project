@@ -9,6 +9,7 @@ import type { AddToCartHandler } from "../cartConnection";
 import ProductFeatures from "../components/ProductFeatures";
 import Link from "next/link";
 import "../productDetail.css";
+import { getVisibleDetailSections, getSectionAnchor } from "../sectionModel";
 
 interface ProductDetailPageProps {
   data: ProductDetailData;
@@ -36,25 +37,30 @@ export default function ProductDetailPage({ data, template, onAddToCart }: Produ
   //  currency: data.currency,
   //}).format(product.price);
 
+  const sections = getVisibleDetailSections(template, data);
+  const navigation = sections.filter((section) => section.kind !== "overview");
+  const reviewSection = sections.find((section) => section.kind === "reviews");
+  const reviewHref = reviewSection ? `#${getSectionAnchor(reviewSection)}` : undefined;
+
   return (
     <main className="ysh-product-page"><div className="ysh-detail-inner">
       <nav aria-label="현재 위치" className="ysh-breadcrumbs"><ol><li><Link href="/">홈</Link></li><li><Link href="/product">상품</Link></li><li aria-current="page">{data.product.name}</li></ol></nav>
-      {template.sections.map((section) => {
+      {sections.map((section) => {
         switch (section.kind) {
           case "overview":
-            return <div key={`${data.product.id}-${section.id}`}><OverviewSection data={data} galleryFit={section.payload.galleryFit} onAddToCart={onAddToCart} />
-              <nav className="ysh-detail-nav" aria-label="상품 상세 목차">
-                {data.features.length > 0 && <a href="#product-features">상품 설명</a>}
-                {data.specifications.length > 0 && <a href="#product-specifications">상품 사양</a>}
-                <a href="#product-reviews">구매 후기</a>
-              </nav></div>;
+            return <div key={`${data.product.id}-${section.id}`}><OverviewSection reviewHref={reviewHref} data={data} galleryFit={section.payload.galleryFit} onAddToCart={onAddToCart} />
+              {navigation.length > 0 && <nav className="ysh-detail-nav" aria-label="상품 상세 목차">
+                {navigation.map((item) => <a key={item.id} href={`#${getSectionAnchor(item)}`}>{item.payload.title}</a>)}
+              </nav>}</div>;
           case "features":
-            return <ProductFeatures key={section.id} title={section.payload.title} features={data.features} />;
+            return <ProductFeatures id={getSectionAnchor(section)} key={section.id} title={section.payload.title} features={data.features} />;
           case "specifications":
-            return <ProductSpecifications key={section.id} title={section.payload.title} specifications={data.specifications} />;
+            return <ProductSpecifications id={getSectionAnchor(section)} key={section.id} title={section.payload.title} specifications={data.specifications} />;
           case "reviews":
             return (
               <ReviewsSection
+                id={getSectionAnchor(section)}
+                notice={data.reviewNotice}
                 key={`${data.product.id}-${section.id}`}
                 title={section.payload.title}
                 reviews={data.reviews}

@@ -12,6 +12,7 @@ export interface ProductReview {
   readonly id: string;
   readonly productId: ProductId;
   readonly authorName: string;
+  readonly isExample?: boolean;
   readonly rating: 1 | 2 | 3 | 4 | 5;
   readonly body: string;
   /** ISO 8601 형식 작성 시각. */
@@ -30,6 +31,7 @@ export interface ProductDetailConfig {
   readonly highlights: readonly string[];
   readonly features: readonly ProductFeature[];
   readonly notice: string;
+  readonly collectionName: string;
 }
 
 /** 설명 사진은 갤러리 사진과 별도로 배정한다. */
@@ -49,10 +51,12 @@ export interface ProductDetailData {
   readonly images: readonly DetailImage[];
   readonly specifications: readonly ProductSpecification[];
   readonly reviews: readonly ProductReview[];
+  readonly reviewNotice?: string;
   readonly summary: string;
   readonly highlights: readonly string[];
   readonly features: readonly ProductFeature[];
   readonly notice: string;
+  readonly collectionName: string;
 }
 
 export interface FeaturesSectionTemplate {
