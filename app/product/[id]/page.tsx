@@ -1,4 +1,4 @@
-import ProductDetailPage from "@/components/productdetailpage/ProductDetailPage";
+import ProductDetailPage from "@/components/product-detail/route/ProductDetailPage";
 import { getProductDetailData } from "@/util/product";
 import { notFound } from "next/navigation";
 import { detailTemplates } from "@/util/data/detailTemplates";
