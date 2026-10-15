@@ -133,6 +133,8 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                                 name={product.name}
                                 price={product.price}
                                 imageUrl={product.imageUrl}
+                                quantity={product.quantity}
+                                onQuantityChange={(q) => updateQuantity(product.productId, q)}
                             />
                         );
                     })}

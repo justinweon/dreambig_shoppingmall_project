@@ -3,17 +3,23 @@ import type { ImageSource } from "@/util/types/product";
 import { Plus } from "lucide-react";
 import { Minus } from "lucide-react";
 import { TrashIcon } from "@/lib/utils";
+// components/cart/CartItem.tsx
+import QuantitySelector from "@/components/product-detail/components/QuantitySelector";
 
 interface CartItemProps {
     name: string;
     price: number;
     imageUrl: ImageSource;
+    quantity: number;
+    onQuantityChange: (quantity:number) => void;
 }
 
 export default function CartItem({
     name,
     price,
     imageUrl,
+    quantity,
+    onQuantityChange
     }: CartItemProps) {
     
     
@@ -37,11 +43,7 @@ export default function CartItem({
             </div>
         
         <div className="flex items-center gap-8">
-            <div className="flex items-center rounded-full border border-gray-300 px-3 py-1 gap-3">
-                <button><Minus className="w-4 h-4"/></button>
-                <span>1</span>
-                <button><Plus className="w-4 h-4"/></button>
-            </div>  
+            <QuantitySelector value={quantity} onChange={onQuantityChange} />
             <button className="w-4 h-4">
                 <TrashIcon/>
             </button>

@@ -19,6 +19,8 @@ interface CartContextValue {
 
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
+
+  updateQuantity: (productId: CartItem["productId"], quantity: number) => void;
 }
 
 // 처음에는 연결된 Provider가 없으므로 null
@@ -86,11 +88,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // 상품을 정상적으로 담았을 때만 모달 열기
     setIsCartOpen(true);
 
+    function updateQuantity(productId: CartItem["productId"], quantity: number) {
+  if (!Number.isSafeInteger(quantity) || quantity < 1) return;
+  const nextItems = itemsRef.current.map((item) =>
+    item.productId === productId ? { ...item, quantity } : item,
+  );
+  itemsRef.current = nextItems;
+  setItems(nextItems);
+}
+
     return { ok: true };
   }
 
   return (
-    <CartContext.Provider value={{ items, addItem, isCartOpen, setIsCartOpen}}>
+    <CartContext.Provider value={{ items, addItem, isCartOpen, setIsCartOpen, updateQuantity}}>
       {children}
     </CartContext.Provider>
   );
