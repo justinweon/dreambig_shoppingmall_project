@@ -30,7 +30,7 @@ export default function OverviewSection({ data, reviewHref, galleryFit = "contai
   return (
     <section
       aria-label="상품 정보와 구매"
-      className="ysh-overview"
+      className="productdetailpage-overview"
     >
       <div className="min-w-0">
         <ProductGallery
@@ -49,7 +49,7 @@ export default function OverviewSection({ data, reviewHref, galleryFit = "contai
           onQuantityChange={setQuantity}
           onAddToCart={onAddToCart ? handleAddToCart : undefined}
         />
-        <p className="ysh-product-notice">{data.notice}</p>
+        <p className="productdetailpage-product-notice">{data.notice}</p>
       </div>
     </section>
   );
