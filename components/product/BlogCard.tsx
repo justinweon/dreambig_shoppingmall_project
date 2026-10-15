@@ -1,3 +1,6 @@
+'use client'
+import { useRef } from "react";
+
 interface BlogCardProps {
     title: string;
     summary: string;
@@ -5,9 +8,32 @@ interface BlogCardProps {
 }
 
 export default function BlogCard(props: BlogCardProps): React.JSX.Element {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    function HandleMouseEnter() {
+        const video = videoRef.current
+        if (video === null) return
+
+        video.play().catch(() => {
+            console.warn("호버 재생을 시작하지 못했습니다.")
+        })
+
+    }
+    
+    function handleMouseLeave() {
+        const video = videoRef.current
+        if (video === null) return
+
+        video.pause()
+    }
+
     return(
-        <div>
+        <div
+            onMouseEnter={HandleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className="group"
+        >
             <video
+                ref={videoRef}
                 src={props.videoSrc}
                 controls={true}
                 muted={true}
