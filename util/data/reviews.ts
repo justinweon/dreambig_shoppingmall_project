@@ -1,59 +1,25 @@
 import type { ProductReview } from "../types/detail";
-import keyRingImage from "@/shared/asset/sejong_key_ring.png";
+import { productMedia } from "./productMedia";
 
-// 데이터 관리/사용: 양석호(상세 리뷰와 사진 확대).
-// 아래 5개는 기존 페이지 이동/사진 확대 테스트용 가상 리뷰이며 실제 구매 후기가 아니다.
-// productId로 상품을 연결한다. 사진은 기존 상품 이미지를 재사용한 개발 예제다.
-export const productReviews: readonly ProductReview[] = [
-  {
-    "id": "mock-review-101-1",
-    "authorName": "테스트 작성자 1",
-    "rating": 5,
-    "body": "사진 확대 동작을 확인하기 위한 가상 리뷰입니다.",
-    "createdAt": "2026-10-14T00:00:00.000Z",
-    "images": [
-      {
-        "id": "mock-review-image-101-1",
-        "src": keyRingImage,
-        "alt": "리뷰 사진 확대 테스트용 키링 이미지"
-      }
-    ],
-    "productId": 101
-  },
-  {
-    "id": "mock-review-101-2",
-    "authorName": "테스트 작성자 2",
-    "rating": 4,
-    "body": "사진이 없는 리뷰의 표시를 확인하기 위한 가상 리뷰입니다.",
-    "createdAt": "2026-10-14T00:00:00.000Z",
-    "images": [],
-    "productId": 101
-  },
-  {
-    "id": "mock-review-101-3",
-    "authorName": "테스트 작성자 3",
-    "rating": 3,
-    "body": "별점 표시를 확인하기 위한 가상 리뷰입니다.",
-    "createdAt": "2026-10-14T00:00:00.000Z",
-    "images": [],
-    "productId": 101
-  },
-  {
-    "id": "mock-review-101-4",
-    "authorName": "테스트 작성자 4",
-    "rating": 5,
-    "body": "첫 페이지의 마지막 항목을 확인하기 위한 가상 리뷰입니다.",
-    "createdAt": "2026-10-14T00:00:00.000Z",
-    "images": [],
-    "productId": 101
-  },
-  {
-    "id": "mock-review-101-5",
-    "authorName": "테스트 작성자 5",
-    "rating": 4,
-    "body": "두 번째 페이지의 첫 항목을 확인하기 위한 가상 리뷰입니다.",
-    "createdAt": "2026-10-14T00:00:00.000Z",
-    "images": [],
-    "productId": 101
-  }
-];
+// 실제 구매 후기가 아닌 로컬 개발 예제. API 연결 시 상품 ID로 서버 리뷰를 조회한다.
+export const exampleReviewNotice = "아래 후기는 화면 확인용 예시이며 실제 구매 후기가 아닙니다.";
+
+const examples = [
+  { id: 101, name: "키링", notes: ["가방에 연결한 모습을 확인하는 사진 후기 예시입니다.", "캐릭터의 표정과 윤곽을 살펴보는 후기 예시입니다.", "고리와 연결 부분에 대한 의견을 표시하는 예시입니다.", "사진 없는 짧은 후기를 표시합니다.", "다섯 번째 후기입니다. 다음 페이지 이동을 확인할 수 있습니다."] },
+  { id: 102, name: "머그컵", notes: ["책상 위 머그컵 배치를 이야기하는 후기 예시입니다.", "손잡이 방향과 그림 배치에 대한 예시입니다.", "컵 디자인에 대한 짧은 의견 예시입니다.", "사진 없는 후기를 확인합니다.", "두 번째 리뷰 페이지의 머그컵 예시입니다."] },
+  { id: 103, name: "노트북 커버", notes: ["노트북과 캐릭터 조합을 소개하는 후기 예시입니다.", "기기별 규격 확인에 대한 예시입니다.", "커버의 디자인에 대한 의견 예시입니다.", "텍스트 후기 표시를 확인합니다.", "두 번째 리뷰 페이지의 커버 예시입니다."] },
+  { id: 104, name: "마우스패드", notes: ["키보드 옆 패드 배치를 소개하는 후기 예시입니다.", "테두리 디자인에 대한 의견 예시입니다.", "책상 색상과의 조합을 이야기하는 예시입니다.", "짧은 후기를 표시합니다.", "두 번째 리뷰 페이지의 패드 예시입니다."] },
+  { id: 105, name: "포토카드", notes: ["포토카드 전시를 소개하는 후기 예시입니다.", "일러스트 색상에 대한 의견 예시입니다.", "카드의 여백 구성에 대한 예시입니다.", "사진 없는 후기를 표시합니다.", "두 번째 리뷰 페이지의 카드 예시입니다."] },
+  { id: 106, name: "아이맥", notes: ["화면에 배치한 캐릭터에 대한 후기 예시입니다.", "밝은 배경 디자인에 대한 예시입니다.", "작업 공간 연출에 대한 의견 예시입니다.", "예시 데이터의 텍스트 후기를 표시합니다.", "두 번째 리뷰 페이지의 화면 연출 예시입니다."] },
+] as const;
+const ratings = [5, 4, 3, 5, 4] as const;
+export const productReviews: readonly ProductReview[] = examples.flatMap((entry) => entry.notes.map((body, index) => {
+  const review_photo = productMedia[entry.id].review;
+  return {
+    id: `demo-${entry.id}-${index + 1}`, productId: entry.id,
+    isExample: true,
+    authorName: `예시 작성자 ${index + 1}`, rating: ratings[index], body,
+    createdAt: `2026-10-${String(14 - index).padStart(2, "0")}T00:00:00.000Z`,
+    images: index === 0 && review_photo ? [{ id: `${entry.id}-review-photo`, src: review_photo, alt: `${entry.name} 예시 후기 사진` }] : [],
+  };
+}));

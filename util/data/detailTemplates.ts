@@ -13,6 +13,11 @@ export const detailTemplates: readonly DetailTemplate[] = [
         payload: { galleryFit: "contain" },
       },
       {
+        id: "features",
+        kind: "features",
+        payload: { title: "상품 이야기" },
+      },
+      {
         id: "specifications",
         kind: "specifications",
         payload: { title: "상품 사양" },

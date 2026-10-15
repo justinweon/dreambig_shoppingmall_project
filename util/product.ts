@@ -1,6 +1,6 @@
 import { products } from "./data/products";
 import { productDetailConfigs } from "./data/productDetails";
-import { productReviews } from "./data/reviews";
+import { productReviews, exampleReviewNotice } from "./data/reviews";
 import type { ProductDetailData } from "./types/detail";
 import type { ProductId } from "./types/product";
 
@@ -17,8 +17,11 @@ export function getProductDetailData(productId: ProductId): ProductDetailData | 
   // 상품이나 설정 누락을 임의의 다른 상품으로 대체하지 않는다.
   if (!product || !config) return undefined;
 
+  const reviews = productReviews.filter((review) => review.productId === productId);
   return {
     product,
+    collectionName: config.collectionName,
+    reviewNotice: reviews.some((review) => review.isExample) ? exampleReviewNotice : undefined,
     templateId: config.templateId,
     currency: product.currency,
     // 갤러리 미등록 상품도 대표 이미지는 표시한다. 추가 사진은 상세 설정에 등록한다.
@@ -26,6 +29,10 @@ export function getProductDetailData(productId: ProductId): ProductDetailData | 
       { id: `${product.id}-main`, src: product.imageUrl, alt: `${product.name} 상품 이미지` },
     ],
     specifications: config.specifications,
-    reviews: productReviews.filter((review) => review.productId === productId),
+    summary: config.summary,
+    highlights: config.highlights,
+    features: config.features,
+    notice: config.notice,
+    reviews,
   };
 }
