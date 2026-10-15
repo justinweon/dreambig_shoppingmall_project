@@ -3,11 +3,18 @@ import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createRequire } from "node:module";
+import { basename } from "node:path";
 
 // Node 렌더링 검증에서는 스타일을 읽지 않는다. 실제 CSS는 빌드와 브라우저에서 확인한다.
 const requireComponent = createRequire(import.meta.url);
 requireComponent.extensions[".css"] = () => {};
+// Node에는 Next 이미지 로더가 없으므로 정적 import만 테스트용 메타데이터로 대체한다.
+// 이미지 파일 자체의 내용이나 크기를 검증하는 테스트는 아니다.
+requireComponent.extensions[".png"] = (module, filename) => {
+  module.exports = { src: `/test-assets/${basename(filename)}`, width: 1, height: 1 };
+};
 const ProductDetailPage = (requireComponent("./route/ProductDetailPage") as typeof import("./route/ProductDetailPage")).default;
+const { CartProvider } = requireComponent("../cart/CartProvider") as typeof import("../cart/CartProvider");
 import type { DetailTemplate, ProductDetailData, ProductReview } from "@/util/types/detail";
 
 const reviews: ProductReview[] = [5, 4, 3, 5, 4].map((rating, index) => ({
@@ -26,7 +33,11 @@ const template: DetailTemplate = { id: "test", name: "test", sections: [
   { id: "materials", kind: "specifications", payload: { title: "재료 안내" } },
   { id: "story", kind: "features", payload: { title: "제작 이야기" } },
 ] };
-const render = (value = data, layout = template) => renderToStaticMarkup(createElement(ProductDetailPage, { data: value, template: layout }));
+const render = (value = data, layout = template) => renderToStaticMarkup(
+  createElement(CartProvider, null,
+    createElement(ProductDetailPage, { data: value, template: layout }),
+  ),
+);
 
 test("목차의 순서와 제목, 링크 대상은 변경된 템플릿과 일치한다", () => {
   const html = render();
