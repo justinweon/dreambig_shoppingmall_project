@@ -1,5 +1,5 @@
 import { products as defaultProducts } from "@/util/data/products";
-import { productBanners, carouselItems } from "@/util/data/home";
+import { productBanners, carouselItems, homeThirdContent } from "@/util/data/home";
 import type { Product } from "@/util/types/product";
 import type { ProductBannerData, CarouselItem } from "@/util/types/home";
 import ProductBanner from "./ProductBanner";
@@ -25,8 +25,8 @@ export default function HomeThirdSection({ products = defaultProducts, banners =
         const product = product_by_id.get(banner.productId);
         return product ? <ProductBanner key={banner.id} banner={banner} product={product} /> : null;
       })}
-      <ProductCarousel entries={entries} />
-      <HunminJeongeumMarquee />
+      <ProductCarousel entries={entries} title={homeThirdContent.carouselTitle} />
+      <HunminJeongeumMarquee title={homeThirdContent.hunminTitle} />
     </div>
   );
 }

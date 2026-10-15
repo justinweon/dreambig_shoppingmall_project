@@ -3,6 +3,11 @@ import { productMedia } from "./productMedia";
 // 양석호: 기존 상품 이미지를 배너 콘텐츠로 재사용한다.
 
 // 데이터 관리/사용: 양석호(메인 세 번째 영역). 배열 순서가 노출 순서다.
+export const homeThirdContent = {
+  carouselTitle: "세종으로 완성하는 일상",
+  hunminTitle: "한 글자씩, 이어지는 우리말",
+};
+
 export const productBanners: readonly ProductBannerData[] = [
   {
     id: "sejong-keyring",

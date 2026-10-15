@@ -9,11 +9,11 @@ import "./homethird.css";
 
 interface ProductCarouselProps {
   entries: readonly CarouselEntry[];
-  title?: string;
+  title: string;
   autoplayMs?: number;
 }
 
-export default function ProductCarousel({ entries, title = "세종으로 완성하는 일상", autoplayMs = 6000 }: ProductCarouselProps) {
+export default function ProductCarousel({ entries, title, autoplayMs = 6000 }: ProductCarouselProps) {
   const container_ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   useEffect(() => {
