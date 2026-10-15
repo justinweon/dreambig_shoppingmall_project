@@ -1,4 +1,4 @@
-import type { Currency, DetailImage, Product, ProductId } from "./product";
+import type { DetailImage, Product, ProductId } from "./product";
 
 // 데이터 관리/사용: 양석호(상품 상세). 공통 상품 정보는 Product 타입을 사용한다.
 /** 화면에 표시할 사양 한 줄. value에는 필요한 단위를 함께 적는다. */
@@ -46,8 +46,6 @@ export interface ProductFeature {
 export interface ProductDetailData {
   readonly product: Product;
   readonly templateId: string;
-  /** 기존 ProductInfo props를 유지하는 파생 값. 원본은 product.currency다. */
-  readonly currency: Currency;
   readonly images: readonly DetailImage[];
   readonly specifications: readonly ProductSpecification[];
   readonly reviews: readonly ProductReview[];

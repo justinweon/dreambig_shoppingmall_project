@@ -23,7 +23,6 @@ export function getProductDetailData(productId: ProductId): ProductDetailData | 
     collectionName: config.collectionName,
     reviewNotice: reviews.some((review) => review.isExample) ? exampleReviewNotice : undefined,
     templateId: config.templateId,
-    currency: product.currency,
     // 갤러리 미등록 상품도 대표 이미지는 표시한다. 추가 사진은 상세 설정에 등록한다.
     images: config.images.length > 0 ? config.images : [
       { id: `${product.id}-main`, src: product.imageUrl, alt: `${product.name} 상품 이미지` },
