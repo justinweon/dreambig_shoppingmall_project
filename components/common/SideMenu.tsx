@@ -109,7 +109,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                     id="cart-title"
                     className="text-[22px] ml-[36px] mt-[24px] mb-[25px]"
                 >
-                    Your Cart ({product_num})
+                    장바구니 ({product_num})
                 </div>
 
                 <button
@@ -136,7 +136,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                         <ShoppingBasket className="h-20 w-20" />
                     </div>
 
-                    <div>your cart is ready!</div>
+                    <div>장바구니가 비어 있어요!</div>
 
                     <Button
                         type="button"
@@ -150,7 +150,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
             "
                     >
                         <Link className="whitespace-nowrap" href="/product">
-                            Continue Shopping
+                            상품 보러 가기
                         </Link>
 
                         <span
