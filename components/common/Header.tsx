@@ -24,7 +24,7 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { isCartOpen, setIsCartOpen } = useCart();
-  console.log(products.length);
+
   return (
     <>
       <header className="relative [&_button]:cursor-pointer [&_a]:cursor-pointer border-b border-black pr-8 pl-8" onMouseLeave={() => setIsOpen(false)}>
