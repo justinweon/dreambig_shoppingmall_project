@@ -33,7 +33,7 @@ export const products: readonly Product[] = [
   },
   {
     id: 103,
-    name: "세종 샘틀 덮개",
+    name: "세종 셈틀 덮개",
     price: 25000,
     currency: "KRW",
     category: "개발용 굿즈",
@@ -73,7 +73,7 @@ export const products: readonly Product[] = [
   },
   {
     id: 106,
-    name: "아이맥",
+    name: "세종맥",
     price: 2000,
     currency: "KRW",
     category: "개발용 굿즈",
