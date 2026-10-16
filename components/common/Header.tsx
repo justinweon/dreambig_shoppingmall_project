@@ -27,11 +27,11 @@ export default function Header() {
   console.log(products.length);
   return (
     <>
-      <header className="relative [&_button]:cursor-pointer [&_a]:cursor-pointer border-b border-black" onMouseLeave={() => setIsOpen(false)}>
+      <header className="relative [&_button]:cursor-pointer [&_a]:cursor-pointer border-b border-black pr-8 pl-8" onMouseLeave={() => setIsOpen(false)}>
         <div className="flex justify-between h-[70px] items-center bg-white text-black">
-          <Link href="/" className='w-1/5'><Image src={sejongLogo} alt="logo" width={120} height={40} /></Link>
+          <Link href="/" className='w-1/8'><Image src={sejongLogo} alt="logo" width={120} height={40} /></Link>
           <div className="grow">
-            <nav className="flex justify-evenly">
+            <nav className="flex items-center justify-evenly gap-2 whitespace-nowrap text-xs sm:text-sm lg:text-base">
               <button>세종이야기</button>
               <Link
               href="/product"
@@ -48,7 +48,7 @@ export default function Header() {
           </div>
 
 
-          <div className="flex w-50 ml-50 gap-2 ">
+          <div className="ml-3 mr-6 flex shrink-0 items-center gap-3 lg:ml-12">
             <Link href=""><LanguageIcon /></Link>
             <button type="button" aria-label="검색" onClick={() => setIsSearchOpen((prev) => !prev)}><SearchIcon /></button>
             <Link href=""><UserIcon /></Link>
