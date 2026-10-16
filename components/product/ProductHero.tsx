@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import bannerImage from '@/shared/asset/sejong_banner_3.png'
+import bannerImage from '@/shared/asset/sejong_banner_2.png'
 
 export default function ProductHero(): React.JSX.Element {
     return (

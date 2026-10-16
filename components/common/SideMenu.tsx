@@ -11,6 +11,7 @@ import { useCart } from "../cart/CartProvider";
 import { ShippingIcon } from "@/lib/utils";
 import { MdShoppingCartCheckout } from "react-icons/md";
 import { FaMoneyBill } from "react-icons/fa";
+import Link from "next/link";
 
 
 
@@ -25,21 +26,51 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
 
     const dialogRef = useRef<HTMLDialogElement>(null);
 
-    const { items, updateQuantity } = useCart();
+    const { items, updateQuantity, removeItem } = useCart();
 
     const product_num = items.reduce((total, item) => total + item.quantity, 0);
 
     useEffect(() => {
-        const dialog = dialogRef.current;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
 
-        if (!dialog) return;
+    // 닫힌 상태에서 닫기 요청이 오면 할 일 없음
+    if (!isCartOpen && !dialog.open) return;
 
-        if (isCartOpen && !dialog.open) {
-            dialog.showModal();
-        } else if (!isCartOpen && dialog.open) {
+    if (isCartOpen && !dialog.open) {
+        dialog.showModal();
+    }
+
+    const animation = dialog.animate(
+        isCartOpen
+            ? [
+                { transform: "translateX(100%)" },
+                { transform: "translateX(0)" },
+            ]
+            : [
+                { transform: "translateX(0)" },
+                { transform: "translateX(100%)" },
+            ],
+        {
+            duration: 400,
+            easing: isCartOpen ? "ease-out" : "ease-in",
+            fill: "forwards",
+        },
+    );
+
+    animation.onfinish = () => {
+        if (!isCartOpen) {
             dialog.close();
         }
-    }, [isCartOpen]);
+    };
+
+    // 상태가 바뀌거나 컴포넌트가 사라지면 이전 애니메이션 정리
+    return () => {
+        animation.onfinish = null;
+        animation.cancel();
+    };
+}, [isCartOpen]);
+
 
 
     return (
@@ -47,6 +78,24 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
             ref={dialogRef}
             aria-labelledby="cart-title"
             onClose={() => setIsCartOpen(false)}
+
+            onClick={(event) => {
+            // 내부 상품이나 버튼 클릭은 무시
+            if (event.target !== event.currentTarget) return;
+
+            const rect = event.currentTarget.getBoundingClientRect();
+
+            // 클릭한 좌표가 장바구니 영역 밖인지 확인
+            const isOutside =
+            event.clientX < rect.left ||
+            event.clientX > rect.right ||
+            event.clientY < rect.top ||
+            event.clientY > rect.bottom;
+
+            if (isOutside) {
+            setIsCartOpen(false);
+            }
+        }}
             className="
         fixed inset-y-0 right-0 left-auto m-0
         h-dvh max-h-none w-[480px] max-w-full
@@ -100,9 +149,9 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
             hover:w-[230px] focus-visible:w-[230px]
             "
                     >
-                        <span className="whitespace-nowrap">
+                        <Link className="whitespace-nowrap" href="/product">
                             Continue Shopping
-                        </span>
+                        </Link>
 
                         <span
                             aria-hidden="true"
@@ -137,22 +186,27 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                                 imageUrl={product.imageUrl}
                                 quantity={item.quantity}
                                 onQuantityChange={(q) => updateQuantity(item.productId, q)}
+                                onRemove={() => removeItem(item.productId)}
+                                
                             />
                         );
                     })}
                 </div>
             )}
 
-            <div className="border-b">
+            <div>
                 <div className="text-2xl m-5">이런 제품도 있어요</div>
-                <CartRecomms/>
+                <div className="border-b pb-5">
+                <CartRecomms />
+                </div>
+
             </div>
             
-            <div className="grid grid-cols-2 col-start place-items-start text-gray-300 mt-10">
-                <div className="flex gap-4 items-center ml-[40px]"> <ShippingIcon/> <div>Free Shipping</div> </div>
-                <div className="flex gap-4 items-center ml-[40px]"> <VerifiedIcon/> <div>1-Year Warranty</div> </div>
-                <div className="flex gap-4 items-center ml-[40px]"> <ReturnIcon/> <div>30-Day Returns</div> </div>
-                <div className="flex gap-4 items-center ml-[40px]"> <FaMoneyBill/> <div>Checkout</div> </div>
+            <div className="grid grid-cols-2 col-start place-items-start text-gray-300 mt-10 [&_div]:flex [&_div]:gap-4 [&_div]:items-cente">
+                <div className="ml-6 mb-4"> <ShippingIcon/> <div>Free Shipping</div> </div>
+                <div > <VerifiedIcon/> <div>1-Year Warranty</div> </div>
+                <div className="ml-6"> <ReturnIcon/> <div>30-Day Returns</div> </div>
+                <div className="ml-1"> <FaMoneyBill/> <div>Checkout</div> </div>
             </div>
             
         </dialog>
