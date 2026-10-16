@@ -32,7 +32,7 @@ export default function Header() {
           <Link href="/" className='w-1/5'><Image src={sejongLogo} alt="logo" width={120} height={40} /></Link>
           <div className="grow">
             <nav className="flex justify-evenly">
-              <button>About Sejong</button>
+              <button>세종이야기</button>
               <Link
               href="/product"
                 type="button"
@@ -41,9 +41,9 @@ export default function Header() {
                 onMouseEnter={() => setIsOpen(true)}
                 onClick={() => setIsOpen(true)}
               >
-                Product
+                문화상품
               </Link>
-              <button>Help Center</button>
+              <button>도움마당</button>
             </nav>
           </div>
 
