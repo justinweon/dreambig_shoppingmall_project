@@ -202,7 +202,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
 
             </div>
             
-            <div className="grid grid-cols-2 col-start place-items-start text-gray-300 mt-10 [&_div]:flex [&_div]:gap-4 [&_div]:items-cente">
+            <div className="grid grid-cols-2 col-start place-items-start text-gray-300 pt-10 pb-10 [&_div]:flex [&_div]:gap-4 [&_div]:items-cente">
                 <div className="ml-6 mb-4"> <ShippingIcon/> <div>Free Shipping</div> </div>
                 <div > <VerifiedIcon/> <div>1-Year Warranty</div> </div>
                 <div className="ml-6"> <ReturnIcon/> <div>30-Day Returns</div> </div>
