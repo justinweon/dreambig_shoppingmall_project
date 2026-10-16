@@ -3,10 +3,11 @@ import ProductCard from "@/components/product/ProductCard"
 import { products } from "@/util/data/products" 
 import Link from "next/link"
 import Image from "next/image"
+import { ImageSource } from "@/util/types/product"
 
 
 interface ProductListProps {
-  imageUrl: string;
+  imageUrl: ImageSource;
   name: string;
   productId: number;
 }

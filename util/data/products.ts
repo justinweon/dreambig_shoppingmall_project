@@ -1,10 +1,20 @@
 import type { Product } from "../types/product";
+
+// 원본 이미지
 import keyRingImage from "@/shared/asset/sejong_key_ring.png";
 import mugcupImage from "@/shared/asset/sejong_mug_cup.png";
 import laptopImage from "@/shared/asset/sejong_laptop_cover.png";
 import mousePadImage from "@/shared/asset/sejong_mouse_pad.png";
 import photoCardImage from "@/shared/asset/sejong_photo_card.png";
 import iMacImage from "@/shared/asset/sejong_iMac.png";
+
+// 누끼 이미지
+import eraseKeyRingImage from "@/shared/asset/erase_sejong_key_ring.png";
+import eraseMugcupImage from "@/shared/asset/erase_sejong_mug_cup.png";
+import eraseLaptopImage from "@/shared/asset/erase_sejong_laptop_cover.png";
+import eraseMousePadImage from "@/shared/asset/erase_sejong_mouse_pad.png";
+import erasePhotoCardImage from "@/shared/asset/erase_sejong_photo_card.png";
+import eraseIMacImage from "@/shared/asset/erase_sejong_iMac.png";
 
 // 데이터 관리: 양석호 / 사용: 홍정기(목록), 양석호(상세/배너/캐러셀), 장바구니 담당자.
 // 기존 여섯 상품의 이름/가격과 101/102 ID를 보존한 프로젝트 공통 데이터다.
@@ -18,6 +28,7 @@ export const products: readonly Product[] = [
     currency: "KRW",
     category: "개발용 굿즈",
     imageUrl: keyRingImage,
+    eraseImageUrl: eraseKeyRingImage,
     description: "상세 화면 구성을 확인하기 위한 키링 예시 상품입니다.",
   },
   {
@@ -27,6 +38,7 @@ export const products: readonly Product[] = [
     currency: "KRW",
     category: "개발용 굿즈",
     imageUrl: laptopImage,
+    eraseImageUrl: eraseLaptopImage,
     description: "상품 목록과 상세 연결을 확인하기 위한 노트북 커버 예시입니다.",
   },
   {
@@ -36,6 +48,7 @@ export const products: readonly Product[] = [
     currency: "KRW",
     category: "개발용 굿즈",
     imageUrl: mousePadImage,
+    eraseImageUrl: eraseMousePadImage,
     description: "상품 목록과 상세 연결을 확인하기 위한 마우스패드 예시입니다.",
   },
   {
@@ -45,6 +58,7 @@ export const products: readonly Product[] = [
     currency: "KRW",
     category: "개발용 굿즈",
     imageUrl: mugcupImage,
+    eraseImageUrl: eraseMugcupImage,
     description: "같은 템플릿에서 다른 상품을 표시하기 위한 머그컵 예시입니다.",
   },
   {
@@ -54,6 +68,7 @@ export const products: readonly Product[] = [
     currency: "KRW",
     category: "개발용 굿즈",
     imageUrl: photoCardImage,
+    eraseImageUrl: erasePhotoCardImage,
     description: "상품 목록과 상세 연결을 확인하기 위한 포토카드 예시입니다.",
   },
   {
@@ -63,6 +78,7 @@ export const products: readonly Product[] = [
     currency: "KRW",
     category: "개발용 굿즈",
     imageUrl: iMacImage,
+    eraseImageUrl: eraseIMacImage,
     description: "상품 목록과 상세 연결을 확인하기 위한 아이맥 예시입니다.",
   },
 ];

@@ -61,14 +61,21 @@ export default function Header() {
           aria-hidden={!isOpen}
           inert={!isOpen}
           className={`absolute top-full inset-x-0 z-50 bg-white text-black px-8 py-10 border-t border-gray-200 transition-opacity duration-200 ease-out ${isOpen
-            ? "opacity-100 pointer-events-auto"
+            ? "opacity-100 bg-white/70 pointer-events-auto"
             : "opacity-0 pointer-events-none"
             }`}
         >
-          <div className='flex justify-evenly'>
-            {products.length > 0 && products.map((item) => <ProductList key={item.id} productId={item.id} {...item} 
-            onSelect={() => setIsOpen(false)} 
-            />)}
+          <div className="flex justify-evenly">
+              {products.length > 0 &&
+              products.map((item) => (
+              <ProductList
+              key={item.id}
+              productId={item.id}
+              {...item}
+              imageUrl={item.eraseImageUrl}
+              onSelect={() => setIsOpen(false)}
+              />
+              ))}
           </div>
         </div>
       </header>

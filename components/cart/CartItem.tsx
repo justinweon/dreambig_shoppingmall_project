@@ -10,6 +10,7 @@ interface CartItemProps {
     imageUrl: ImageSource;
     quantity: number;
     onQuantityChange: (quantity:number) => void;
+    onRemove: ()=> void;
 }
 
 export default function CartItem({
@@ -17,7 +18,8 @@ export default function CartItem({
     price,
     imageUrl,
     quantity,
-    onQuantityChange
+    onQuantityChange,
+    onRemove,
     }: CartItemProps) {
     
     
@@ -42,7 +44,7 @@ export default function CartItem({
         
         <div className="flex items-center gap-8">
             <QuantitySelector value={quantity} onChange={onQuantityChange} />
-            <button className="w-4 h-4">
+            <button className="w-4 h-4" onClick={onRemove} aria-label={`${name} 장바구니에서 삭제`}>
                 <TrashIcon/>
             </button>
         </div>

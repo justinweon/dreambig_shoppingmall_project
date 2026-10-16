@@ -18,8 +18,12 @@ export interface Product {
   readonly category: string;
   /** 목록 카드의 대표 이미지. 갤러리 사진 목록과는 구분한다. */
   readonly imageUrl: ImageSource;
+  readonly eraseImageUrl: ImageSource;
+  
   /** 상세 상단에서 보여주는 상품 소개. */
   readonly description: string;
+
+
 }
 
 /** 이미지 선택과 리뷰 사진 확대에 쓰는 이미지 한 장. 배열 순서가 표시 순서다. */

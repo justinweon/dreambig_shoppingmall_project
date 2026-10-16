@@ -20,7 +20,12 @@ interface CartContextValue {
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
 
+//장바구니 추가
   updateQuantity: (productId: CartItem["productId"], quantity: number) => void;
+
+//장바구니 아이템 삭제
+removeItem: (productId: CartItem["productId"]) => void;
+
 }
 
 // 처음에는 연결된 Provider가 없으므로 null
@@ -100,8 +105,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
   setItems(nextItems);
 }
 
+//장바구니 아이템 삭제
+function removeItem(productId: CartItem["productId"]) {
+  // 삭제하려는 상품을 제외한 나머지만 남김
+  const nextItems = itemsRef.current.filter(
+    (item) => item.productId !== productId,
+  );
+
+  itemsRef.current = nextItems;
+  setItems(nextItems);
+}
+
+
+
   return (
-    <CartContext.Provider value={{ items, addItem, isCartOpen, setIsCartOpen, updateQuantity}}>
+    <CartContext.Provider value={{ items, addItem, isCartOpen, setIsCartOpen, updateQuantity, removeItem}}>
       {children}
     </CartContext.Provider>
   );
@@ -117,3 +135,5 @@ export function useCart() {
 
   return context;
 }
+
+
