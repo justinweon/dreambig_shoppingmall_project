@@ -17,13 +17,13 @@ import erasePhotoCardImage from "@/shared/asset/erase_sejong_photo_card.png";
 import eraseIMacImage from "@/shared/asset/erase_sejong_iMac.png";
 
 // 데이터 관리: 양석호 / 사용: 홍정기(목록), 양석호(상세/배너/캐러셀), 장바구니 담당자.
-// 기존 여섯 상품의 이름/가격과 101/102 ID를 보존한 프로젝트 공통 데이터다.
+// 기존 여섯 상품의 가격과 ID를 보존한 프로젝트 공통 데이터다.
 // 현재 판매 정보가 아니라 개발용 카탈로그다. 분류/설명/통화는 운영 정보 확인 후 교체한다.
 // 가격은 원 단위(KRW). 상품명/가격 변경은 이 파일 한곳에서 처리한다.
 export const products: readonly Product[] = [
   {
     id: 101,
-    name: "키링",
+    name: "세종 열쇠고리",
     price: 8000,
     currency: "KRW",
     category: "개발용 굿즈",
@@ -33,7 +33,7 @@ export const products: readonly Product[] = [
   },
   {
     id: 103,
-    name: "노트북 커버",
+    name: "세종 샘틀 덮개",
     price: 25000,
     currency: "KRW",
     category: "개발용 굿즈",
@@ -43,7 +43,7 @@ export const products: readonly Product[] = [
   },
   {
     id: 104,
-    name: "마우스패드",
+    name: "세종 손쥐 받침",
     price: 12000,
     currency: "KRW",
     category: "개발용 굿즈",
@@ -53,7 +53,7 @@ export const products: readonly Product[] = [
   },
   {
     id: 102,
-    name: "머그컵",
+    name: "세종 쉼표잔",
     price: 15000,
     currency: "KRW",
     category: "개발용 굿즈",
@@ -63,7 +63,7 @@ export const products: readonly Product[] = [
   },
   {
     id: 105,
-    name: "포토카드",
+    name: "세종 그림패",
     price: 3000,
     currency: "KRW",
     category: "개발용 굿즈",
