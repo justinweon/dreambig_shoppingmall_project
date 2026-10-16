@@ -34,7 +34,6 @@ export default function ImageModal({
       dialog.close();
       document.body.style.overflow = previousOverflow;
 
-      // 맘에안들어
       if (
         previousFocus instanceof HTMLElement &&
         previousFocus.isConnected

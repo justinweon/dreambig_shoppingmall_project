@@ -22,8 +22,8 @@ const reviews: ProductReview[] = [5, 4, 3, 5, 4].map((rating, index) => ({
   body: "후기", createdAt: "2026-10-15", images: [],
 }));
 const data: ProductDetailData = {
-  product: { id: 1, name: "테스트", price: 100, currency: "KRW", category: "굿즈", imageUrl: "/test.png", description: "" },
-  templateId: "test", currency: "KRW", images: [], reviews, summary: "", highlights: [],
+  product: { id: 1, name: "테스트", price: 100, currency: "KRW", category: "굿즈", imageUrl: "/test.png", eraseImageUrl: "/test.png", description: "" },
+  templateId: "test", images: [], reviews, summary: "", highlights: [],
   features: [{ id: "story", title: "특징", points: ["설명"], image: { id: "photo", src: "/test.png", alt: "사진" } }],
   specifications: [{ label: "재질", value: "금속" }], notice: "", collectionName: "다른 컬렉션",
 };
@@ -74,4 +74,10 @@ test("예시 후기 안내는 전달된 데이터가 있을 때만 나온다", (
   assert.ok(render({ ...data, reviewNotice: notice }).includes(notice));
   assert.ok(!render().includes(notice));
   assert.ok(!render().includes("실제 구매 후기가 아닙니다"));
+});
+
+test("상품 통화가 바뀌면 가격 표시에도 반영된다", () => {
+  const html = render({ ...data, product: { ...data.product, currency: "USD", price: 12.5 } });
+  assert.ok(html.includes('$12.50'));
+  assert.ok(!html.includes('₩12'));
 });
