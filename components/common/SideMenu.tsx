@@ -131,7 +131,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
 
             {/* 담긴 상품이 없으면 안내, 있으면 상품 목록 표시 */}
             {items.length === 0 ? (
-                <div className="h-[465px] flex flex-col items-center justify-center gap-4">
+                <div className="h-[350px] flex flex-col items-center justify-center gap-4">
                     <div>
                         <ShoppingBasket className="h-20 w-20" />
                     </div>
