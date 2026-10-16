@@ -1,15 +1,3 @@
-.homethird-logo-row { overflow: hidden; }
-.homethird-logo-track { display: flex; width: max-content; min-width: 200%; animation: homethird-logo-scroll var(--duration, 28s) linear infinite; }
-.homethird-logo-group { display: flex; flex: 1 0 auto; align-items: center; justify-content: space-around; gap: 24px; padding: 12px; }
-.homethird-logo { display: flex; width: 144px; height: 80px; flex: 0 0 144px; align-items: center; justify-content: center; }
-.homethird-marquee:hover .homethird-logo-track, .homethird-marquee:focus-within .homethird-logo-track, .homethird-marquee-paused .homethird-logo-track { animation-play-state: paused; }
-@keyframes homethird-logo-scroll { to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) {
-  .homethird-logo-track { animation: none; transform: none; width: 100%; min-width: 0; }
-  .homethird-logo-group { flex-wrap: wrap; flex: 1 1 100%; min-width: 0; }
-  .homethird-logo-clone { display: none; }
-}
-
 .homethird { width: 100%; min-width: 0; color: #151515; background: white; }
 .homethird-product-hero { position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 540px; overflow: hidden; background: #30271f; color: white; }
 .homethird-hero-image { object-fit: cover; object-position: center; }

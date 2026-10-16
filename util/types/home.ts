@@ -27,13 +27,3 @@ export interface CarouselItem {
   readonly hoverImage?: { readonly src: ImageSource; readonly alt: string };
   readonly marketingDescription?: string;
 }
-
-/** 상품과 독립된 파트너 로고. 화면 반복 애니메이션용 복제본은 데이터에 넣지 않는다. */
-export interface PartnerLogo {
-  readonly id: string;
-  readonly name: string;
-  readonly src: ImageSource;
-  readonly href?: string;
-  /** 로고가 배치될 첫 번째 줄(0) 또는 두 번째 줄(1). */
-  readonly row: 0 | 1;
-}

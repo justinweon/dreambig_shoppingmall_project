@@ -1,4 +1,4 @@
-import type { CarouselItem, PartnerLogo, ProductBannerData } from "../types/home";
+import type { CarouselItem, ProductBannerData } from "../types/home";
 import { productMedia } from "./productMedia";
 // 양석호: 기존 상품 이미지를 배너 콘텐츠로 재사용한다.
 
@@ -18,8 +18,6 @@ export const productBanners: readonly ProductBannerData[] = [
     actions: [{ label: "자세히 보기", href: "/product/101#product-features" }, { label: "상품 보기", href: "/product/101" }],
   },
 ];
-// 실제 파트너 자료를 제공받으면 등록한다. 미리보기용 샘플은 별도 fixture에서만 사용한다.
-export const partnerLogos: readonly PartnerLogo[] = [];
 
 // 기존 목록의 여섯 상품 순서. 이름/가격/대표 이미지는 products.ts에서 ID로 조회한다.
 export const carouselItems: readonly CarouselItem[] = [
