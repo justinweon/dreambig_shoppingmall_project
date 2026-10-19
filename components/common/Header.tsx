@@ -51,7 +51,7 @@ export default function Header() {
           <div className="ml-3 mr-6 flex shrink-0 items-center gap-3 lg:ml-12">
             <Link href=""><LanguageIcon /></Link>
             <button type="button" aria-label="검색" onClick={() => setIsSearchOpen((prev) => !prev)}><SearchIcon /></button>
-            <Link href=""><UserIcon /></Link>
+            <Link href="/login"><UserIcon /></Link>
             <button type="button" aria-label="장바구니 열기" onClick={() => setIsCartOpen(true)}><CartIcon /></button>
           </div>
 
