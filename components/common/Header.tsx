@@ -32,7 +32,7 @@ export default function Header() {
           <Link href="/" className='w-1/8'><Image src={sejongLogo} alt="logo" width={120} height={40} /></Link>
           <div className="grow">
             <nav className="flex items-center justify-evenly gap-2 whitespace-nowrap text-xs sm:text-sm lg:text-base">
-              <button>세종이야기</button>
+              <Link href="/about">세종이야기</Link>
               <Link
               href="/product"
                 type="button"
@@ -98,7 +98,7 @@ export default function Header() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="검색어를 입력하세요..."
-            className="flex-1 border-b border-black outline-none py-1 text-sm bg-transparent"
+            className="flex-1 border-black outline-none py-1 text-sm bg-transparent"
             autoFocus={isSearchOpen}
           />
           <button type="submit" className="text-sm font-medium">
