@@ -194,6 +194,18 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                 </div>
             )}
 
+            {/* 정기 장바구니 -> 주문 확인 화면 연결 */}
+            {items.length > 0 && (
+                <div className="p-5">
+                    <Link
+                        href="/checkout"
+                        onClick={() => setIsCartOpen(false)}
+                        className="flex h-[50px] w-full items-center justify-center bg-[#7DDD41] text-black"
+                        >
+                            구매하기
+                    </Link>
+                </div>
+            )}
             <div>
                 <div className="text-2xl m-5">이런 제품도 있어요</div>
                 <div className="border-b pb-5">
