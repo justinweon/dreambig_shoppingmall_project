@@ -35,7 +35,7 @@ export default function BlogCard(props: BlogCardProps): React.JSX.Element {
             <video
                 ref={videoRef}
                 src={props.videoSrc}
-                controls={true}
+                controls={false}
                 muted={true}
                 playsInline={true}
                 className="aspect-video w-full rounded-xl bg-gray-100 object-contain"
