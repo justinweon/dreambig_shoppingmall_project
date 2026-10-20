@@ -11,9 +11,10 @@ export async function signUpAction(
 ): Promise<ActionState> {
     const input = {
         name: String(formData.get('name') ?? ''),
+        nickname: String(formData.get('nickname') ?? ''), 
         email: String(formData.get('email') ?? ''),
         password: String(formData.get('password') ?? ''),
-        passwordConfirm: String(formData.get('passwordConfirm') ?? ''),
+        passwordConfirm: String( formData.get('passwordConfirm') ?? ''),
     };
     const keep = { name: input.name, email: input.email };
 
@@ -29,7 +30,7 @@ export async function signUpAction(
     password: input.password,
     options: {
         data: {
-            nickname: input.name.trim(),   // 트리거가 꺼내는 필수 이름표
+            nickname: input.nickname.trim(),   // 트리거가 꺼내는 필수 이름표
             name: input.name.trim(),       // 트리거가 꺼내는 선택 이름표
         },
     },
@@ -40,12 +41,18 @@ export async function signUpAction(
     const isDuplicate = msg.includes('already');
     const isProfileError = msg.includes('database error saving new user');
 
+    if (isProfileError) {
+        return {
+            success: false,
+            errors: { nickname: '이미 사용 중인 닉네임이에요. 다른 닉네임을 입력해 주세요.' },
+            data: keep,
+        };
+    }
+
     return {
         success: false,
         message: isDuplicate
             ? '이미 가입된 이메일이에요.'
-            : isProfileError
-            ? '이미 사용 중인 이름이거나 가입 정보를 저장하지 못했어요. 다른 이름으로 다시 시도해 주세요.'
             : `회원가입에 실패했어요: ${signUpError?.message ?? '알 수 없는 오류'}`,
         data: keep,
     };

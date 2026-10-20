@@ -11,6 +11,12 @@ export function validateSignUpInput(input: SignUpInput): Record<string, string> 
         errors.name = '이름은 최소 2자 이상 입력해야 합니다.';
     }
 
+    if (!input.nickname || !input.nickname.trim()) {
+    errors.nickname = '닉네임을 입력해 주세요.';
+} else if (input.nickname.trim().length < 2 || input.nickname.trim().length > 12) {
+    errors.nickname = '닉네임은 2자 이상 12자 이하로 입력해 주세요.';
+}
+
     if (!input.email || !input.email.trim()) {
         errors.email = '이메일 주소를 입력해 주세요.';
     } else if (!EMAIL_REGEX.test(input.email.trim())) {

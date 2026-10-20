@@ -109,6 +109,24 @@ const errorText = (field: string) =>
     </div>
   )}
 
+  {/* 새로 들기: 닉네임 */}
+{!isLogin && (
+  <div className="mb-6">
+    <label htmlFor="nickname" className="block text-[13px] font-semibold text-neutral-950">
+      닉네임
+    </label>
+    <input
+      id="nickname"
+      name="nickname"
+      type="text"
+      defaultValue={kept?.nickname}
+      placeholder="훈민상점에서 부를 이름을 아뢰어라"
+      className={inputClass}
+    />
+    {errorText("nickname")}
+  </div>
+)}
+
   <label htmlFor="email" className="block text-[13px] font-semibold text-neutral-950">
     편지 받을 곳
   </label>
