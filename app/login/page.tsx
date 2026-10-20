@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
+import { signUpAction } from "@/domains/auth/actions/signup.action";
+import { INITIAL_ACTION_STATE } from "@/shared/types/action.types";
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
@@ -19,6 +21,14 @@ export default function LoginPage() {
   const [mode, setMode] = useState<Mode>("login");
   const [showPw, setShowPw] = useState(false);
   const isLogin = mode === "login";
+  const [state, formAction, isPending] = useActionState(signUpAction, INITIAL_ACTION_STATE);
+  const kept = state.data as { name?: string; email?: string } | undefined;
+
+// 새로 들기 탭일 때만, 해당 칸의 에러 문구를 보여 줌
+const errorText = (field: string) =>
+  !isLogin && state.errors?.[field] ? (
+    <p className="mt-2 text-xs text-red-600">{state.errors[field]}</p>
+  ) : null;
 
   return (
     <main className="mx-auto w-full max-w-[1280px] flex-1 px-6 pb-24 pt-8 lg:px-12 xl:px-20">
@@ -62,79 +72,131 @@ export default function LoginPage() {
           </div>
 
           <form
-            className="mt-8"
-            onSubmit={(e) => {
-              e.preventDefault();
-              // TODO: 로그인 / 회원가입 API 연결
-            }}
-          >
-            <label
-              htmlFor="email"
-              className="block text-[13px] font-semibold text-neutral-950"
-            >
-              편지 받을 곳
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="편지 받을 곳을 아뢰어라"
-              className={inputClass}
-            />
+  className="mt-8"
+  noValidate
+  action={isLogin ? undefined : formAction}
+  onSubmit={
+    isLogin
+      ? (e) => {
+          e.preventDefault();
+          // TODO 내일: 로그인 액션 연결
+        }
+      : undefined
+  }
+>
+  {/* 가입 실패 메시지 (예: 이미 가입된 이메일) */}
+  {!isLogin && state.message && !state.success && (
+    <p className="mb-6 border border-red-200 bg-red-50 p-3 text-[13px] text-red-600">
+      {state.message}
+    </p>
+  )}
 
-            <label
-              htmlFor="password"
-              className="mt-6 block text-[13px] font-semibold text-neutral-950"
-            >
-              비밀글쇠
-            </label>
-            <div className="relative">
-              <input
-                id="password"
-                type={showPw ? "text" : "password"}
-                placeholder="비밀글쇠를 아뢰어라"
-                className={`${inputClass} pr-12`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPw((v) => !v)}
-                aria-label={showPw ? "비밀글쇠 숨기기" : "비밀글쇠 보기"}
-                className="absolute right-4 top-2 flex h-12 items-center text-neutral-500 xl:h-14"
-              >
-                {showPw ? <Eye size={18} /> : <EyeOff size={18} />}
-              </button>
-            </div>
+  {/* 새로 들기: 이름 */}
+  {!isLogin && (
+    <div className="mb-6">
+      <label htmlFor="name" className="block text-[13px] font-semibold text-neutral-950">
+        이름
+      </label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        defaultValue={kept?.name}
+        placeholder="그대의 이름을 아뢰어라"
+        className={inputClass}
+      />
+      {errorText("name")}
+    </div>
+  )}
 
-            <div className="mt-4 flex items-center justify-between text-[13px]">
-              <label className="flex cursor-pointer items-center gap-2 text-neutral-600">
-                <input type="checkbox" className="size-4 accent-neutral-950" />
-                나를 기억하게 하기
-              </label>
-              <Link
-                href="#"
-                className="border-b border-neutral-950 font-medium text-neutral-950"
-              >
-                비밀글쇠를 잊었느냐?
-              </Link>
-            </div>
+  <label htmlFor="email" className="block text-[13px] font-semibold text-neutral-950">
+    편지 받을 곳
+  </label>
+  <input
+    id="email"
+    name="email"
+    type="email"
+    defaultValue={kept?.email}
+    placeholder="편지 받을 곳을 아뢰어라"
+    className={inputClass}
+  />
+  {errorText("email")}
 
-            <button
-              type="submit"
-              className="mt-8 h-14 w-full bg-neutral-950 text-[15px] font-semibold text-white transition-colors hover:bg-neutral-800"
-            >
-              {isLogin ? "예, 들어가겠나이다" : "예, 새로 들겠나이다"}
-            </button>
+  <label htmlFor="password" className="mt-6 block text-[13px] font-semibold text-neutral-950">
+    비밀글쇠
+  </label>
+  <div className="relative">
+    <input
+      id="password"
+      name="password"
+      type={showPw ? "text" : "password"}
+      placeholder="비밀글쇠를 아뢰어라"
+      className={`${inputClass} pr-12`}
+    />
+    <button
+      type="button"
+      onClick={() => setShowPw((v) => !v)}
+      aria-label={showPw ? "비밀글쇠 숨기기" : "비밀글쇠 보기"}
+      className="absolute right-4 top-2 flex h-12 items-center text-neutral-500 xl:h-14"
+    >
+      {showPw ? <Eye size={18} /> : <EyeOff size={18} />}
+    </button>
+  </div>
+  {errorText("password")}
 
-            <p className="mt-6 text-center text-[13px] text-neutral-500">
-              {isLogin ? "아직 이름표가 없느냐?" : "이미 이름표가 있느냐?"}
-              <button
-                type="button"
-                onClick={() => setMode(isLogin ? "signup" : "login")}
-                className="ml-2 border-b border-neutral-950 font-medium text-neutral-950"
-              >
-                {isLogin ? "새로 들기" : "들어가기"}
-              </button>
-            </p>
-          </form>
+  {/* 새로 들기: 비밀글쇠 확인 */}
+  {!isLogin && (
+    <>
+      <label htmlFor="passwordConfirm" className="mt-6 block text-[13px] font-semibold text-neutral-950">
+        비밀글쇠 다시 쓰기
+      </label>
+      <input
+        id="passwordConfirm"
+        name="passwordConfirm"
+        type={showPw ? "text" : "password"}
+        placeholder="비밀글쇠를 한 번 더 아뢰어라"
+        className={inputClass}
+      />
+      {errorText("passwordConfirm")}
+    </>
+  )}
+
+  {/* 들어가기 탭에서만 보이는 부분 */}
+  {isLogin && (
+    <div className="mt-4 flex items-center justify-between text-[13px]">
+      <label className="flex cursor-pointer items-center gap-2 text-neutral-600">
+        <input type="checkbox" className="size-4 accent-neutral-950" />
+        나를 기억하게 하기
+      </label>
+      <Link href="#" className="border-b border-neutral-950 font-medium text-neutral-950">
+        비밀글쇠를 잊었느냐?
+      </Link>
+    </div>
+  )}
+
+  <button
+    type="submit"
+    disabled={!isLogin && isPending}
+    className="mt-8 h-14 w-full bg-neutral-950 text-[15px] font-semibold text-white transition-colors hover:bg-neutral-800 disabled:opacity-50 cursor-pointer"
+  >
+    {isLogin
+      ? "예, 들어가겠나이다"
+      : isPending
+        ? "이름표 만드는 중..."
+        : "예, 새로 들겠나이다"}
+  </button>
+
+  <p className="mt-6 text-center text-[13px] text-neutral-500">
+    {isLogin ? "아직 이름표가 없느냐?" : "이미 이름표가 있느냐?"}
+    <button
+      type="button"
+      onClick={() => setMode(isLogin ? "signup" : "login")}
+      className="ml-2 border-b border-neutral-950 font-medium text-neutral-950"
+    >
+      {isLogin ? "새로 들기" : "들어가기"}
+    </button>
+  </p>
+</form>
         </section>
 
         {/* ── 오른쪽: 이미지 (988 : 930) ── */}
