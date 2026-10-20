@@ -3,6 +3,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useRef,
   useState,
   type ReactNode,
@@ -11,6 +12,8 @@ import {
 import type { CartItem, AddToCartRequest } from "@/util/types/cart";
 import type { CartAddResult } from "@/components/product-detail/cartConnection";
 import { getProductById } from "@/util/product";
+import { supabase } from "@/shared/lib/supabase-browser";
+import { fetchCartItems } from "./cartRepository";
 
 // 다른 컴포넌트에 제공할 값의 타입
 interface CartContextValue {
@@ -20,11 +23,15 @@ interface CartContextValue {
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
 
-//장바구니 추가
+  isCartLoading: boolean;
+
+  cartError: string | null;
+
+  //장바구니 추가
   updateQuantity: (productId: CartItem["productId"], quantity: number) => void;
 
-//장바구니 아이템 삭제
-removeItem: (productId: CartItem["productId"]) => void;
+  //장바구니 아이템 삭제
+  removeItem: (productId: CartItem["productId"]) => void;
 
 }
 
@@ -34,12 +41,69 @@ const CartContext = createContext<CartContextValue | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   // 화면에 표시할 장바구니 목록
   const [items, setItems] = useState<readonly CartItem[]>([]);
-  
+
   const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const [isCartLoading, setIsCartLoading] = useState(true);
+  const [cartError, setCartError] = useState<string | null>(null);
 
   // 빠르게 연속 호출돼도 최신 목록을 읽기 위한 값
   const itemsRef = useRef<readonly CartItem[]>([]);
+  // 아래 정기 작성 106줄까지
+  useEffect(() => {
+    let active = true;
+    let requestNumber = 0;
+    let currentUserId: string | null | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange((_event, session) => {
+        const userId = session?.user.id ?? null;
+
+        if (userId === currentUserId) return;
+
+        currentUserId = userId;
+        const thisRequest = ++requestNumber;
+
+        if (timer !== undefined) clearTimeout(timer);
+
+        itemsRef.current = [];
+        setItems([]);
+        setCartError(null);
+        setIsCartLoading(userId !== null);
+
+        if (!userId) return;
+
+        timer = setTimeout(async () => {
+          try {
+            const nextItems = await fetchCartItems(userId);
+
+            if (!active || thisRequest !== requestNumber) return;
+
+            itemsRef.current = nextItems;
+            setItems(nextItems);
+          } catch {
+            if (!active || thisRequest !== requestNumber) return;
+
+            setCartError('장바구니를 불러오지 못했습니다.');
+          } finally {
+            if (active && thisRequest === requestNumber) {
+              setIsCartLoading(false);
+            }
+          }
+        }, 0);
+      });
+
+    return () => {
+      active = false;
+      requestNumber += 1;
+
+      if (timer !== undefined) clearTimeout(timer);
+
+      subscription.unsubscribe();
+    };
+
+  }, []);
 
   function addItem({
     productId,
@@ -97,29 +161,38 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function updateQuantity(productId: CartItem["productId"], quantity: number) {
-  if (!Number.isSafeInteger(quantity) || quantity < 1) return;
-  const nextItems = itemsRef.current.map((item) =>
-    item.productId === productId ? { ...item, quantity } : item,
-  );
-  itemsRef.current = nextItems;
-  setItems(nextItems);
-}
+    if (!Number.isSafeInteger(quantity) || quantity < 1) return;
+    const nextItems = itemsRef.current.map((item) =>
+      item.productId === productId ? { ...item, quantity } : item,
+    );
+    itemsRef.current = nextItems;
+    setItems(nextItems);
+  }
 
-//장바구니 아이템 삭제
-function removeItem(productId: CartItem["productId"]) {
-  // 삭제하려는 상품을 제외한 나머지만 남김
-  const nextItems = itemsRef.current.filter(
-    (item) => item.productId !== productId,
-  );
+  //장바구니 아이템 삭제
+  function removeItem(productId: CartItem["productId"]) {
+    // 삭제하려는 상품을 제외한 나머지만 남김
+    const nextItems = itemsRef.current.filter(
+      (item) => item.productId !== productId,
+    );
 
-  itemsRef.current = nextItems;
-  setItems(nextItems);
-}
+    itemsRef.current = nextItems;
+    setItems(nextItems);
+  }
 
 
 
   return (
-    <CartContext.Provider value={{ items, addItem, isCartOpen, setIsCartOpen, updateQuantity, removeItem}}>
+    <CartContext.Provider value={{
+      items,
+      addItem,
+      isCartOpen,
+      setIsCartOpen,
+      updateQuantity,
+      removeItem,
+      isCartLoading,
+      cartError
+    }}>
       {children}
     </CartContext.Provider>
   );

@@ -5,7 +5,25 @@ import { useCart } from "../cart/CartProvider"
 import { products } from "@/util/data/products"
 
 export default function CheckOut(): React.JSX.Element {
-    const {items} = useCart();
+    const {items, isCartLoading, cartError} = useCart();
+
+    if (isCartLoading) {
+        return(
+            <main>
+                <h1>주문확인</h1>
+                <p>장바구니를 불러오는 중입니다.</p>
+            </main>
+        );
+    }
+
+    if (cartError) {
+        return (
+            <main>
+                <h1>주문확인</h1>
+                <p role='alert'>{cartError}</p>
+            </main>
+        )
+    }
 
     const hasMissingProduct = items.some(
         (item) => !products.find(

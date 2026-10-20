@@ -26,7 +26,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
 
     const dialogRef = useRef<HTMLDialogElement>(null);
 
-    const { items, updateQuantity, removeItem } = useCart();
+    const { items, updateQuantity, removeItem, isCartLoading, cartError } = useCart();
 
     const product_num = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -136,7 +136,11 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
             </div>
 
             {/* 담긴 상품이 없으면 안내, 있으면 상품 목록 표시 */}
-            {items.length === 0 ? (
+            {isCartLoading ? (
+                <p className='p-5'>장바구니를 불러오는 중입니다.</p>
+            ) : cartError ? (
+                <p className='p-5' role='alert'>{cartError}</p>
+            ) : items.length === 0 ? (
                 <div className="h-[350px] flex flex-col items-center justify-center gap-4">
                     <div>
                         <ShoppingBasket className="h-20 w-20" />
@@ -200,7 +204,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                 </div>
             )}
 
-    {items.length > 0 && (
+    {!isCartLoading && !cartError && items.length > 0 && (
                 <div className="border-b p-5">
                     <div className="flex justify-between text-lg">
                         <span>총 결제금액</span>
