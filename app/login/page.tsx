@@ -1,7 +1,9 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { Suspense, useActionState, useState } from "react";
 import { signUpAction } from "@/domains/auth/actions/signup.action";
+import { signInAction } from "@/domains/auth/actions/signin.action";
+import RedirectToField from "@/domains/auth/components/RedirectToField";
 import { INITIAL_ACTION_STATE } from "@/shared/types/action.types";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,12 +23,16 @@ export default function LoginPage() {
   const [mode, setMode] = useState<Mode>("login");
   const [showPw, setShowPw] = useState(false);
   const isLogin = mode === "login";
-  const [state, formAction, isPending] = useActionState(signUpAction, INITIAL_ACTION_STATE);
-  const kept = state.data as { name?: string; email?: string } | undefined;
+  const [signUpState, signUpFormAction, isSignUpPending] = useActionState(signUpAction, INITIAL_ACTION_STATE);
+const [signInState, signInFormAction, isSignInPending] = useActionState(signInAction, INITIAL_ACTION_STATE);
 
-// 새로 들기 탭일 때만, 해당 칸의 에러 문구를 보여 줌
+// 지금 탭에 맞는 결과와 처리 상태를 고름
+const state = isLogin ? signInState : signUpState;
+const isPending = isLogin ? isSignInPending : isSignUpPending;
+const kept = state.data as { name?: string; nickname?: string; email?: string } | undefined;
+
 const errorText = (field: string) =>
-  !isLogin && state.errors?.[field] ? (
+  state.errors?.[field] ? (
     <p className="mt-2 text-xs text-red-600">{state.errors[field]}</p>
   ) : null;
 
@@ -74,18 +80,13 @@ const errorText = (field: string) =>
           <form
   className="mt-8"
   noValidate
-  action={isLogin ? undefined : formAction}
-  onSubmit={
-    isLogin
-      ? (e) => {
-          e.preventDefault();
-          // TODO 내일: 로그인 액션 연결
-        }
-      : undefined
-  }
+  action={isLogin ? signInFormAction : signUpFormAction}
 >
+  <Suspense fallback={null}>
+    <RedirectToField />
+  </Suspense>
   {/* 가입 실패 메시지 (예: 이미 가입된 이메일) */}
-  {!isLogin && state.message && !state.success && (
+  {state.message && !state.success && (
     <p className="mb-6 border border-red-200 bg-red-50 p-3 text-[13px] text-red-600">
       {state.message}
     </p>
@@ -193,16 +194,14 @@ const errorText = (field: string) =>
   )}
 
   <button
-    type="submit"
-    disabled={!isLogin && isPending}
-    className="mt-8 h-14 w-full bg-neutral-950 text-[15px] font-semibold text-white transition-colors hover:bg-neutral-800 disabled:opacity-50 cursor-pointer"
-  >
-    {isLogin
-      ? "예, 들어가겠나이다"
-      : isPending
-        ? "이름표 만드는 중..."
-        : "예, 새로 들겠나이다"}
-  </button>
+  type="submit"
+  disabled={isPending}
+  className="mt-8 h-14 w-full bg-neutral-950 text-[15px] font-semibold text-white transition-colors hover:bg-neutral-800 disabled:opacity-50" 
+>
+  {isLogin
+    ? isPending ? "문 여는 중..." : "예, 들어가겠나이다"
+    : isPending ? "이름표 만드는 중..." : "예, 새로 들겠나이다"}
+</button>
 
   <p className="mt-6 text-center text-[13px] text-neutral-500">
     {isLogin ? "아직 이름표가 없느냐?" : "이미 이름표가 있느냐?"}

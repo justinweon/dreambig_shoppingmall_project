@@ -8,6 +8,7 @@ import ProductList from "../product/ProductList";
 import Image from "next/image";
 import sejongLogo from "@/shared/asset/sejong_logo.png";
 import { useCart } from "../cart/CartProvider";
+import { usePathname } from "next/navigation";
 
 //상품데이터 가져오기
 import { products } from "@/util/data/products"
@@ -19,6 +20,9 @@ type ProductMenuItemProps = Pick<Product, "id" | "imageUrl" | "name"> & {
 };
 
 export default function Header() {
+  const pathname = usePathname();
+  const loginHref =
+  pathname === "/login" ? "/login" : `/login?redirectTo=${encodeURIComponent(pathname)}`;
 
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -28,6 +32,7 @@ export default function Header() {
   return (
     <>
       <header className="relative [&_button]:cursor-pointer [&_a]:cursor-pointer border-b border-black pr-8 pl-8" onMouseLeave={() => setIsOpen(false)}>
+        
         <div className="flex justify-between h-[70px] items-center bg-white text-black">
           <Link href="/" className='w-1/8'><Image src={sejongLogo} alt="logo" width={120} height={40} /></Link>
           <div className="grow">
@@ -51,7 +56,7 @@ export default function Header() {
           <div className="ml-3 mr-6 flex shrink-0 items-center gap-3 lg:ml-12">
             <Link href=""><LanguageIcon /></Link>
             <button type="button" aria-label="검색" onClick={() => setIsSearchOpen((prev) => !prev)}><SearchIcon /></button>
-            <Link href="/login"><UserIcon /></Link>
+            <Link href={loginHref}><UserIcon /></Link>
             <button type="button" aria-label="장바구니 열기" onClick={() => setIsCartOpen(true)}><CartIcon /></button>
           </div>
 

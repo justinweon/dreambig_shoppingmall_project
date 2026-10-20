@@ -16,7 +16,7 @@ export async function signUpAction(
         password: String(formData.get('password') ?? ''),
         passwordConfirm: String( formData.get('passwordConfirm') ?? ''),
     };
-    const keep = { name: input.name, email: input.email };
+    const keep = { name: input.name, nickname: input.nickname, email: input.email };
 
     const errors = validateSignUpInput(input);
     if (Object.keys(errors).length > 0) {

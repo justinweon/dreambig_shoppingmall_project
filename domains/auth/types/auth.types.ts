@@ -5,3 +5,8 @@ export interface SignUpInput {
     password: string;
     passwordConfirm: string;
 }
+
+export interface SignInInput {
+    email: string;
+    password: string;
+}
