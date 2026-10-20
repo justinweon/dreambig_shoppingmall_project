@@ -25,34 +25,31 @@ export async function signUpAction(
     const supabase = createServerClient();
 
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: input.email.trim(),
-        password: input.password,
-    });
+    email: input.email.trim(),
+    password: input.password,
+    options: {
+        data: {
+            nickname: input.name.trim(),   // 트리거가 꺼내는 필수 이름표
+            name: input.name.trim(),       // 트리거가 꺼내는 선택 이름표
+        },
+    },
+});
 
     if (signUpError || !authData.user) {
-        const isDuplicate = signUpError?.message?.toLowerCase().includes('already');
-        return {
-            success: false,
-            message: isDuplicate
-                ? '이미 가입된 이메일이에요.'
-                : `회원가입에 실패했어요: ${signUpError?.message ?? '알 수 없는 오류'}`,
-            data: keep,
-        };
-    }
+    const msg = signUpError?.message?.toLowerCase() ?? '';
+    const isDuplicate = msg.includes('already');
+    const isProfileError = msg.includes('database error saving new user');
 
-    const { error: profileError } = await supabase.from('profiles').insert({
-        id: authData.user.id,
-        name: input.name.trim(),
-        role: 'user',
-    });
-
-    if (profileError) {
-        return {
-            success: false,
-            message: `프로필 저장에 실패했어요: ${profileError.message}`,
-            data: keep,
-        };
-    }
+    return {
+        success: false,
+        message: isDuplicate
+            ? '이미 가입된 이메일이에요.'
+            : isProfileError
+            ? '이미 사용 중인 이름이거나 가입 정보를 저장하지 못했어요. 다른 이름으로 다시 시도해 주세요.'
+            : `회원가입에 실패했어요: ${signUpError?.message ?? '알 수 없는 오류'}`,
+        data: keep,
+    };
+}
 
     redirect('/');
 }
