@@ -30,6 +30,12 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
 
     const product_num = items.reduce((total, item) => total + item.quantity, 0);
 
+    const totalPrice = items.reduce((total, item) => {
+        const product = products.find((p) => p.id === item.productId);
+        if (!product) return total;
+        return total + product.price * item.quantity;
+    }, 0);
+
     useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
@@ -194,18 +200,25 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                 </div>
             )}
 
-            {/* 정기 장바구니 -> 주문 확인 화면 연결 */}
-            {items.length > 0 && (
-                <div className="p-5">
-                    <Link
-                        href="/checkout"
-                        onClick={() => setIsCartOpen(false)}
-                        className="flex h-[50px] w-full items-center justify-center bg-[#7DDD41] text-black"
-                        >
-                            구매하기
-                    </Link>
+    {items.length > 0 && (
+                <div className="border-b p-5">
+                    <div className="flex justify-between text-lg">
+                        <span>총 결제금액</span>
+                        <span>{totalPrice.toLocaleString()}원</span>
+                    </div>
+                    <Button
+                        type="button"
+                        className="mt-4 h-[50px] w-full bg-[#7DDD41] text-black hover:bg-[#7DDD41]"
+                        onClick={() => {
+                            // TODO: 정기님이 만드는 결제 페이지와 연결
+                        }}
+                    >
+                        결제하기
+                    </Button>
                 </div>
             )}
+
+
             <div>
                 <div className="text-2xl m-5">이런 제품도 있어요</div>
                 <div className="border-b pb-5">
