@@ -1,12 +1,14 @@
 import { SignInInput, SignUpInput } from '../types/auth.types';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^01[016789]\d{7,8}$/;
+
 
 export function validateSignUpInput(input: SignUpInput): Record<string, string> {
     const errors: Record<string, string> = {};
 
     if (!input.name || !input.name.trim()) {
-        errors.name = '이름(닉네임)을 입력해 주세요.';
+        errors.name = '이름을 입력해 주세요.';
     } else if (input.name.trim().length < 2) {
         errors.name = '이름은 최소 2자 이상 입력해야 합니다.';
     }
@@ -33,6 +35,17 @@ export function validateSignUpInput(input: SignUpInput): Record<string, string> 
         errors.passwordConfirm = '비밀번호 확인을 입력해 주세요.';
     } else if (input.password !== input.passwordConfirm) {
         errors.passwordConfirm = '비밀번호가 일치하지 않습니다.';
+    }
+
+    const phone = (input.phone || '').replace(/\D/g, '');
+    if (!phone) {
+        errors.phone = '휴대폰 번호를 입력해 주세요.';
+    } else if (!PHONE_REGEX.test(phone)) {
+        errors.phone = '올바른 휴대폰 번호가 아닙니다.';
+    }
+
+    if (!input.zipCode || !input.address) {
+        errors.address = '주소 찾기 버튼으로 주소를 입력해 주세요.';
     }
 
     return errors;

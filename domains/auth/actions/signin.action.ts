@@ -4,14 +4,7 @@ import { redirect } from 'next/navigation';
 import { createServerClient } from '@/shared/lib/supabase';
 import { ActionState } from '@/shared/types/action.types';
 import { validateSignInInput } from '../utils/authValidation';
-
-// 돌아갈 주소가 안전한 우리 사이트 안쪽 주소인지 확인
-function getSafeRedirect(path: string): string {
-    if (!path.startsWith('/') || path.startsWith('//') || path.startsWith('/login')) {
-        return '/';
-    }
-    return path;
-}
+import { getSafeRedirect } from '../utils/redirect'; 
 
 export async function signInAction(
     prevState: ActionState,
