@@ -21,8 +21,8 @@ type ProductMenuItemProps = Pick<Product, "id" | "imageUrl" | "name"> & {
 
 export default function Header() {
   const pathname = usePathname();
-  const loginHref =
-  pathname === "/login" ? "/login" : `/login?redirectTo=${encodeURIComponent(pathname)}`;
+  const isAuthPage = pathname === "/login" || pathname === "/signup";
+  const loginHref = isAuthPage ? "/login" : `/login?redirectTo=${encodeURIComponent(pathname)}`;
 
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
