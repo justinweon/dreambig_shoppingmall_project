@@ -36,7 +36,7 @@ const dashboard = await api.admin.getDashboardSummary();
 | 담당 | 호출 | 반환/동작 |
 | --- | --- | --- |
 | 로그인 | `auth.signIn(email, password)` | Supabase user/session |
-| 회원가입 | `auth.signUp({ email, password, nickname, name? })` | user/session. 이메일 확인 설정에 따라 session은 null일 수 있음 |
+| 회원가입 | `auth.signUp({ email, password, nickname, name?, phone?, zip_code?, address?, address_detail? })` | user/session. 연락처/배송지는 생략/null 허용. 이메일 확인 설정에 따라 session은 null일 수 있음 |
 | 로그아웃 | `auth.signOut()` | 현재 세션 로그아웃 |
 | 공통 헤더 | `auth.getCurrentUser()` | 검증된 user 또는 로그인 세션이 없으면 null |
 | 마이페이지 | `auth.getMyProfile()` | 본인 프로필 또는 null |
@@ -135,6 +135,6 @@ try {
 
 ## 검증
 
-`npm run test:api`, `npm run typecheck:api`로 API 테스트와 타입을 검사한다. 변경 범위 ESLint도 통과했다. 테스트 15개는 실제 Supabase 클라이언트의 HTTP 요청을 모의 응답에 연결해 사용자 필터, 관리자 역할 재확인, RPC 인자, 중복 주문 입력, 페이지 범위, 빈 결과, Toss 응답 검증과 재시도를 확인한다. 서버 전용 모듈의 일반 환경 import 차단도 확인했다.
+`npm run test:api`, `npm run typecheck:api`로 API 테스트와 타입을 검사한다. 변경 범위 ESLint도 통과했다. 테스트 17개는 실제 Supabase 클라이언트의 HTTP 요청을 모의 응답에 연결해 사용자 필터, 관리자 역할 재확인, RPC 인자, 중복 주문 입력, 페이지 범위, 빈 결과, Toss 응답 검증과 재시도를 확인한다. 서버 전용 모듈의 일반 환경 import 차단도 확인했다. 회원가입 연락처/배송지 메타데이터 전달, 빈 값과 우편번호 문자열 보존도 검사한다. 실제 DB 변경과 롤백 가입 검증은 [회원가입 DB 기록](../../supabase/README.md)을 참고한다.
 
 실제 DB에서는 스키마와 RPC/정책을 읽었으며 주문 생성, 상품 수정, 실결제는 실행하지 않았다. 실제 키를 넣은 환경의 통합 검증은 별도다. 전체 프로젝트 타입 검사는 기존 `app/product/page.tsx`와 `components/common/Header.tsx`의 ProductList props 오류, `app/register/page.tsx`의 SignupForm import 대소문자 오류로 실패한다. 변경 전 main `605d791`의 소스를 별도 임시 폴더에서 검사해 같은 세 오류를 재현했다. 전체 빌드도 마지막 import 오류에서 중단되며 이 세 UI 파일은 수정하지 않았다.
