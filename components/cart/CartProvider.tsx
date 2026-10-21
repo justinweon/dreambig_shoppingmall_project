@@ -13,12 +13,12 @@ import type { CartItem, AddToCartRequest } from "@/util/types/cart";
 import type { CartAddResult } from "@/components/product-detail/cartConnection";
 import { getProductById } from "@/util/product";
 import { supabase } from "@/shared/lib/supabase-browser";
-import { fetchCartItems } from "./cartRepository";
+import { fetchCartItems, addCartItem } from "./cartRepository";
 
 // 다른 컴포넌트에 제공할 값의 타입
 interface CartContextValue {
   items: readonly CartItem[];
-  addItem: (request: AddToCartRequest) => CartAddResult;
+  addItem: (request: AddToCartRequest) => Promise<CartAddResult>;
 
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
@@ -49,6 +49,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // 빠르게 연속 호출돼도 최신 목록을 읽기 위한 값
   const itemsRef = useRef<readonly CartItem[]>([]);
+
+  const cartOwnerRef = useRef<{
+    userId: string | null;
+    ready: boolean;
+  } | null>(null);
+
+  const addPendingRef = useRef(false);
   // 아래 정기 작성 106줄까지
   useEffect(() => {
     let active = true;
@@ -63,6 +70,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (userId === currentUserId) return;
 
         currentUserId = userId;
+        cartOwnerRef.current = {userId, ready:false};
         const thisRequest = ++requestNumber;
 
         if (timer !== undefined) clearTimeout(timer);
@@ -82,6 +90,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
             itemsRef.current = nextItems;
             setItems(nextItems);
+            if (cartOwnerRef.current) {
+              cartOwnerRef.current.ready = true;
+            }
           } catch {
             if (!active || thisRequest !== requestNumber) return;
 
@@ -96,6 +107,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     return () => {
       active = false;
+      cartOwnerRef.current = null;
       requestNumber += 1;
 
       if (timer !== undefined) clearTimeout(timer);
@@ -104,62 +116,73 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
 
   }, []);
-
-  function addItem({
+// 정기 수정 183줄까지 상품을 DB에 담고 
+  async function addItem({
     productId,
     quantity,
-  }: AddToCartRequest): CartAddResult {
-    // 1. 실제로 존재하는 상품인지 검사
+  }: AddToCartRequest): Promise<CartAddResult>{
     if (!getProductById(productId)) {
-      return {
-        ok: false,
-        message: "상품을 찾을 수 없습니다.",
-      };
+      return { ok: false, message: "상품을 찾을 수 없습니다."}
     }
 
-    // 2. 수량 검사
     if (!Number.isSafeInteger(quantity) || quantity < 1) {
-      return {
-        ok: false,
-        message: "수량은 1 이상의 정수여야 합니다.",
-      };
+      return { ok: false, message: "수량은 1 이상의 정수여야 합니다."}
     }
 
-    // 3. 이미 담긴 상품인지 확인
-    const current = itemsRef.current;
+    const owner = cartOwnerRef.current;
 
-    const existing = current.find(
-      (item) => item.productId === productId,
-    );
-
-    const nextQuantity = (existing?.quantity ?? 0) + quantity;
-
-    if (!Number.isSafeInteger(nextQuantity)) {
-      return {
-        ok: false,
-        message: "추가할 수 있는 수량을 초과했습니다.",
-      };
+    if (!owner?.userId) {
+      return { ok: false, message: "로그인 후 이용해주세요."}
     }
 
-    // 4. 이미 있으면 수량 합산, 없으면 새 항목 추가
-    const nextItems = existing
-      ? current.map((item) =>
-        item.productId === productId
-          ? { ...item, quantity: nextQuantity }
-          : item,
+    if (!owner.ready) {
+      return {
+        ok: false,
+        message: "장바구니 조회가 완료되지 않았습니다. 조회 오류 시 새로고침 해주세요."
+      }
+    }
+
+    if (addPendingRef.current) {
+      return { ok: false, message: "상품을 담는 중입니다. 잠시 기다려 주세요."}
+    }
+
+    addPendingRef.current = true;
+
+    try {
+      const savedItem = await addCartItem({ productId, quantity});
+
+      if (cartOwnerRef.current !== owner) {
+        return {
+          ok: false,
+          message: "로그인 상태가 변경되었습니다. 현재 장바구니를 확인해 주세요.",
+        };
+      }
+      
+      const current = itemsRef.current;
+      const existing = current.some(
+        (item) => item.productId === productId,
+      );
+
+      const nextItems = existing
+      ? current.map((item) => 
+        item.productId === savedItem.productId ? savedItem : item,
       )
-      : [...current, { productId, quantity }];
+      : [...current, savedItem];
 
-    // 5. 최신 값과 화면 상태 갱신
-    itemsRef.current = nextItems;
-    setItems(nextItems);
+      itemsRef.current = nextItems;
+      setItems(nextItems);
+      setIsCartOpen(true);
+      return { ok: true };
+    } catch {
+      return {
+        ok: false,
+        message: "담기 결과를 확인하지 못했습니다. 새로고침 후 수량을 확인해 주세요"
+      };
+    } finally {
+      addPendingRef.current = false;
+    }
 
-    // 상품을 정상적으로 담았을 때만 모달 열기
-    setIsCartOpen(true);
-
-    return { ok: true };
   }
-
   function updateQuantity(productId: CartItem["productId"], quantity: number) {
     if (!Number.isSafeInteger(quantity) || quantity < 1) return;
     const nextItems = itemsRef.current.map((item) =>
