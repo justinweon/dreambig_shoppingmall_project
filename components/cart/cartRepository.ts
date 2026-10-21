@@ -1,24 +1,26 @@
 // 정기 사용자 장바구니 조회 함수
 import { supabase } from "@/shared/lib/supabase-browser";
 import type { CartItem, AddToCartRequest } from "@/util/types/cart";
+import { createDreambigApi } from "@/util/api";
+
+const api = createDreambigApi(supabase);
 
 // 지정한 회원의 장바구니를 조회
-export async function fetchCartItems(  //async 나왔다 promise는 세트
+export async function fetchCartItems(
     userId: string
 ): Promise<CartItem[]> {
-    const { data, error } = await supabase
-    .from('cart_items')
-    .select('product_id, quantity')
-    .eq('user_id', userId)
-    .order('product_id');
+    // 공통 함수로 로그인한 회원의 장바구니 조회
+    const data = await api.cart.listMyCartItems();
 
-    if (error) {
-        throw error;
+    // 요청 당시 회원과 다른 회원의 결과는 사용하지 않음
+    if (data.some((row) => row.user_id !== userId)) {
+        throw new Error("로그인 상태가 변경되었습니다.");
     }
 
-    return (data ?? []).map((row)=> ({
+    // DB 컬럼명을 기존 화면용 이름으로 변환
+    return data.map((row) => ({
         productId: row.product_id,
-        quantity: row.quantity
+        quantity: row.quantity,
     }));
 }
 
@@ -26,17 +28,8 @@ export async function fetchCartItems(  //async 나왔다 promise는 세트
 export async function addCartItem(
     { productId, quantity } : AddToCartRequest
 ): Promise<CartItem> {
-    const { data, error } = await supabase.rpc(
-        "add_my_cart_item",
-        {
-            p_product_id: productId,
-            p_quantity: quantity,
-        }
-    );
-
-    if (error) {
-        throw error;
-    }
+    // 공통 함수로 상품을 담고 DB의 최종 수량 받기
+    const data = await api.cart.addMyCartItem(productId, quantity)
 
     if (
         !data ||
