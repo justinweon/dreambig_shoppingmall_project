@@ -13,7 +13,7 @@ import type { CartItem, AddToCartRequest } from "@/util/types/cart";
 import type { CartAddResult } from "@/components/product-detail/cartConnection";
 import { getProductById } from "@/util/product";
 import { supabase } from "@/shared/lib/supabase-browser";
-import { fetchCartItems, addCartItem } from "./cartRepository";
+import { fetchCartItems, addCartItem, updateCartItem, deleteCartItem } from "./cartRepository";
 
 // 다른 컴포넌트에 제공할 값의 타입
 interface CartContextValue {
@@ -28,10 +28,10 @@ interface CartContextValue {
   cartError: string | null;
 
   //장바구니 추가
-  updateQuantity: (productId: CartItem["productId"], quantity: number) => void;
+  updateQuantity: (productId: CartItem["productId"], quantity: number) => Promise<void>;
 
   //장바구니 아이템 삭제
-  removeItem: (productId: CartItem["productId"]) => void;
+  removeItem: (productId: CartItem["productId"]) => Promise<void>;
 
 }
 
@@ -116,7 +116,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     };
 
   }, []);
-// 정기 수정 183줄까지 상품을 DB에 담고 
+// 정기 수정 183줄까지 상품을 DB에 담고, 저장결과를 화면에 반영
   async function addItem({
     productId,
     quantity,
@@ -183,27 +183,95 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
 
   }
-  function updateQuantity(productId: CartItem["productId"], quantity: number) {
+  // 정기 수정
+  async function updateQuantity(
+    productId: CartItem["productId"],
+    quantity: number
+  ): Promise<void> {
+    //수량 검사
     if (!Number.isSafeInteger(quantity) || quantity < 1) return;
-    const nextItems = itemsRef.current.map((item) =>
-      item.productId === productId ? { ...item, quantity } : item,
+
+    // 로그인 및 초기 조회 완료 여부 확인
+    const owner = cartOwnerRef.current;
+    if (!owner?.userId || !owner.ready) return;
+
+    // 담기 또는 수량 변경 처리 중이면 추가 요청 차단
+    if (addPendingRef.current) return;
+
+    // 현재 장바구니에 없는 상품이면 중단
+    if (!itemsRef.current.some((item) => item.productId === productId)) {
+      return;
+    }
+
+    addPendingRef.current = true;
+
+    try {
+      // 공통 함수를 통해 DB에 최종 수량 저장
+      const savedItem = await updateCartItem(productId, quantity);
+
+      // 계정 변경·구독 종료 후 도착한 응답 무시
+      if (cartOwnerRef.current !== owner) return;
+      
+      // 해당 상품을 DB가 반환한 결과로 교체
+      const nextItems = itemsRef.current.map((item) => 
+      item.productId === savedItem.productId ? savedItem : item,
     );
     itemsRef.current = nextItems;
     setItems(nextItems);
-  }
-
-  //장바구니 아이템 삭제
-  function removeItem(productId: CartItem["productId"]) {
-    // 삭제하려는 상품을 제외한 나머지만 남김
-    const nextItems = itemsRef.current.filter(
-      (item) => item.productId !== productId,
+  } catch {
+    // 이전 계정에서 발생한 오류는 화면에 표시하지 않음
+    if (cartOwnerRef.current !== owner) return;
+  
+    owner.ready = false;
+    setCartError(
+      "수량 변경 결과를 확인하지 못했습니다. 새로고침 후 수량을 확인해주세요."
     );
-
-    itemsRef.current = nextItems;
-    setItems(nextItems);
+  } finally {
+    // 성공·실패 관계없이 저장 중 표시 해제
+    addPendingRef.current = false;
   }
+}
 
+  // DB에서 상품을 삭제한 뒤 화면 목록 갱신 
+  async function removeItem(
+    productId: CartItem["productId"]
+  ): Promise<void> {
+    //로그인 및 초기 조회 완료 여부 확인
+    const owner = cartOwnerRef.current;
+    if(!owner?.userId || !owner.ready) return;
 
+    // 다른 장바구니 저장 처리 중이면 추가 요청 차단
+    if (addPendingRef.current) return;
+
+    addPendingRef.current = true;
+
+    try{
+      // 공통 함수를 통해 DB에서 상품삭제
+      await deleteCartItem(productId);
+
+      // 계정 변경·구독 종료 후 도착한 응답 무시
+      if (cartOwnerRef.current !== owner) return;
+
+      // 삭제한 상품을 화면에서도 제외
+      const nextItems = itemsRef.current.filter(
+        (item) => item.productId !== productId,
+      );
+      itemsRef.current = nextItems;
+      setItems(nextItems);
+    } catch {
+      // 이전 계정에서 발생한 오류는 화면에 표시하지 않음
+      if (cartOwnerRef.current !== owner) return;
+
+      // 결과가 불확실하면 추가 저장을 막고 재조회 안내
+      owner.ready = false;
+      setCartError(
+        "삭제 결과를 확인하지 못했습니다. 새로고침 후 수량을 확인해주세요."
+      );
+    } finally {
+      // 성공·실패 관계없이 저장 중 표시 해제
+      addPendingRef.current = false;
+    }
+  }
 
   return (
     <CartContext.Provider value={{

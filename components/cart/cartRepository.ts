@@ -45,3 +45,35 @@ export async function addCartItem(
         quantity: data.quantity,
     };
 }
+
+// 로그인한 회원의 장바구니 수량 변경
+export async function updateCartItem(
+    productId: CartItem['productId'],
+    quantity: number
+): Promise<CartItem> {
+    // 공통 함수에 변경 후 최종 수량 전달
+    const data = await api.cart.updateMyCartItem(productId, quantity);
+
+    // 변경결과의 상품과 수량 검사
+    if (
+        !data ||
+        data.product_id !== productId ||
+        !Number.isSafeInteger(data.quantity) ||
+        data.quantity < 1
+    ) {
+        throw new Error("장바구니 수량 변경 결과를 확인할 수 없습니다.");
+    }
+
+    // DB 컬럼명을 기존 화면용 이름으로 변환
+    return {
+        productId: data.product_id,
+        quantity: data.quantity,
+    };
+}
+
+// 로그인한 회원의 장바구니에서 상품 삭제
+export async function deleteCartItem(
+    productId: CartItem["productId"]
+): Promise<void> {
+    await api.cart.deleteMyCartItem(productId);
+}
