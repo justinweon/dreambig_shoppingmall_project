@@ -1,6 +1,5 @@
 'use server';
 
-import { redirect } from 'next/navigation';
 import { createServerClient } from '@/shared/lib/supabase';
 import { ActionState } from '@/shared/types/action.types';
 import { validateSignInInput } from '../utils/authValidation';
@@ -37,5 +36,6 @@ export async function signInAction(
         };
     }
 
-    redirect(redirectTo);
+    // 이동은 브라우저가 새로고침하면서 한다 (장바구니가 로그인 상태를 다시 읽도록)
+    return { success: true, data: { redirectTo } };
 }

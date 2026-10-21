@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useActionState, useState } from "react";
+import { Suspense, useActionState, useState, useEffect } from "react";
 import { signInAction } from "@/domains/auth/actions/signin.action";
 import RedirectToField from "@/domains/auth/components/RedirectToField";
 import AuthSwitchLink from "@/domains/auth/components/AuthSwitchLink";
@@ -18,6 +18,13 @@ export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(signInAction, INITIAL_ACTION_STATE);
   const [showPw, setShowPw] = useState(false);
   const kept = state.data as { email?: string } | undefined;
+  
+  // 로그인 성공하면 새로고침하면서 원래 페이지로 이동
+  useEffect(() => {
+    if (!state.success) return;
+    const { redirectTo } = state.data as { redirectTo: string };
+    window.location.assign(redirectTo);
+  }, [state]);
 
   const errorText = (field: string) =>
     state.errors?.[field] ? (
@@ -113,10 +120,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={isPending}
+              disabled={isPending|| state.success}
               className="mt-8 h-14 w-full bg-neutral-950 text-[15px] font-semibold text-white transition-colors hover:bg-neutral-800 disabled:opacity-50"
             >
-              {isPending ? "문 여는 중..." : "예, 들어가겠나이다"}
+              {isPending || state.success ? "문 여는 중..." : "예, 들어가겠나이다"}
             </button>
 
             <p className="mt-6 text-center text-[13px] text-neutral-500">

@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { LanguageIcon, SearchIcon, CartIcon, UserIcon } from "@/lib/utils";
+import { LanguageIcon, SearchIcon, CartIcon} from "@/lib/utils";
 import SideMenu from "./SideMenu";
 import ProductList from "../product/ProductList";
 import Image from "next/image";
 import sejongLogo from "@/shared/asset/sejong_logo.png";
 import { useCart } from "../cart/CartProvider";
 import { usePathname } from "next/navigation";
+import UserMenu from "./UserMenu";
 
 //상품데이터 가져오기
 import { products } from "@/util/data/products"
@@ -56,7 +57,7 @@ export default function Header() {
           <div className="ml-3 mr-6 flex shrink-0 items-center gap-3 lg:ml-12">
             <Link href=""><LanguageIcon /></Link>
             <button type="button" aria-label="검색" onClick={() => setIsSearchOpen((prev) => !prev)}><SearchIcon /></button>
-            <Link href={loginHref}><UserIcon /></Link>
+            <UserMenu loginHref={loginHref} />
             <button type="button" aria-label="장바구니 열기" onClick={() => setIsCartOpen(true)}><CartIcon /></button>
           </div>
 
