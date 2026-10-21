@@ -1,6 +1,6 @@
 import { cn } from "@/shared/utils/cn";
 import { CrossIcon, ReturnIcon } from "@/lib/utils";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { useEffect, useRef, useState } from "react";
 import { CardSimIcon, ChevronRight, VerifiedIcon } from "lucide-react";
 import { ShoppingBasket } from "lucide-react";
@@ -210,15 +210,16 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                         <span>총 결제금액</span>
                         <span>{totalPrice.toLocaleString()}원</span>
                     </div>
-                    <Button
-                        type="button"
-                        className="mt-4 h-[50px] w-full bg-[#7DDD41] text-black hover:bg-[#7DDD41]"
-                        onClick={() => {
-                            // TODO: 정기님이 만드는 결제 페이지와 연결
-                        }}
-                    >
-                        결제하기
-                    </Button>
+                        <Link
+                            href="/checkout"
+                            onNavigate={() => setIsCartOpen(false)}
+                            className={cn(
+                                buttonVariants(),
+                                "mt-4 h-[50px] w-full bg-[#7DDD41] text-black hover:bg-[#7ddd41]"
+                            )}
+                        >
+                            결제하기
+                        </Link>                 
                 </div>
             )}
 
