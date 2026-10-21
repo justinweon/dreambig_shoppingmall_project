@@ -1,4 +1,30 @@
-import { type ApiClient, requireText, requireUser, unwrap } from './core';
+import {
+    type ApiClient,
+    DreambigApiError,
+    requireText,
+    requireUser,
+    unwrap,
+} from './core';
+import type { ProfileContactInput } from './types';
+
+function normalizeContact(input: ProfileContactInput): ProfileContactInput {
+    const result: ProfileContactInput = {};
+    for (const field of [
+        'phone',
+        'zip_code',
+        'address',
+        'address_detail',
+    ] as const) {
+        if (input[field] !== undefined)
+            result[field] = input[field]?.trim() || null;
+    }
+    if (result.phone && !/^\d+$/.test(result.phone))
+        throw new DreambigApiError(
+            'INVALID_INPUT',
+            'phone must contain only digits',
+        );
+    return result;
+}
 
 export function createAuthApi(client: ApiClient) {
     return {
@@ -10,12 +36,14 @@ export function createAuthApi(client: ApiClient) {
                 }),
             );
         },
-        async signUp(input: {
-            email: string;
-            password: string;
-            nickname: string;
-            name?: string;
-        }) {
+        async signUp(
+            input: {
+                email: string;
+                password: string;
+                nickname: string;
+                name?: string;
+            } & ProfileContactInput,
+        ) {
             return unwrap(
                 await client.auth.signUp({
                     email: requireText(input.email, 'email'),
@@ -24,6 +52,7 @@ export function createAuthApi(client: ApiClient) {
                         data: {
                             nickname: requireText(input.nickname, 'nickname'),
                             name: input.name?.trim(),
+                            ...normalizeContact(input),
                         },
                     },
                 }),

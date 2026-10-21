@@ -28,6 +28,69 @@ test('서버 전용 API를 일반 클라이언트 환경에서 import하면 차�
     assert.match(child.stderr, /cannot be imported from a Client Component/);
 });
 
+test('회원가입 메타데이터는 연락처/기본 배송지의 공백을 정리하고 우편번호 앞자리 0을 보존한다', async () => {
+    const { client, requests } = fixture(() => ({ id: userId }));
+    await createDreambigApi(client).auth.signUp({
+        email: ' sample@example.invalid ',
+        password: 'unchanged password ',
+        nickname: ' 샘플 ',
+        name: ' 이름 ',
+        phone: ' 01012345678 ',
+        zip_code: ' 01234 ',
+        address: ' 기본 주소 ',
+        address_detail: ' 101동 1001호 ',
+    });
+    assert.equal(requests[0].url.pathname, '/auth/v1/signup');
+    const body = requests[0].body as {
+        email: string;
+        password: string;
+        data: unknown;
+    };
+    assert.equal(body.email, 'sample@example.invalid');
+    assert.equal(body.password, 'unchanged password ');
+    assert.deepEqual(body.data, {
+        nickname: '샘플',
+        name: '이름',
+        phone: '01012345678',
+        zip_code: '01234',
+        address: '기본 주소',
+        address_detail: '101동 1001호',
+    });
+});
+
+test('회원가입의 연락처는 생략 가능하고 빈 값/null은 null로 전달한다', async () => {
+    const { client, requests } = fixture(() => ({ id: userId }));
+    const api = createDreambigApi(client);
+    const input = {
+        email: 'sample@example.invalid',
+        password: 'password',
+        nickname: '샘플',
+    };
+    await api.auth.signUp(input);
+    assert.deepEqual((requests[0].body as { data: unknown }).data, {
+        nickname: '샘플',
+    });
+    await api.auth.signUp({
+        ...input,
+        phone: ' ',
+        zip_code: null,
+        address: '',
+        address_detail: null,
+    });
+    assert.deepEqual((requests[1].body as { data: unknown }).data, {
+        nickname: '샘플',
+        phone: null,
+        zip_code: null,
+        address: null,
+        address_detail: null,
+    });
+    await assert.rejects(
+        api.auth.signUp({ ...input, phone: '010-1234-5678' }),
+        { code: 'INVALID_INPUT' },
+    );
+    assert.equal(requests.length, 2);
+});
+
 const userId = '11111111-1111-4111-8111-111111111111';
 const orderId = '22222222-2222-4222-8222-222222222222';
 const order = {

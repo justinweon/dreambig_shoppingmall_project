@@ -60,9 +60,16 @@ export type ProfileRow = {
     id: string;
     nickname: string;
     name: string | null;
+    phone: string | null;
+    zip_code: string | null;
+    address: string | null;
+    address_detail: string | null;
     role: 'user' | 'admin';
     created_at: string;
 };
+export type ProfileContactInput = Partial<
+    Pick<ProfileRow, 'phone' | 'zip_code' | 'address' | 'address_detail'>
+>;
 export type CartRow = { user_id: string; product_id: number; quantity: number };
 export type OrderItemInput = { productId: number; quantity: number };
 export type OrderRow = {
@@ -115,7 +122,16 @@ export type Database = {
                 CarouselRow,
                 'hover_image' | 'marketing_description'
             >;
-            profiles: Table<ProfileRow, 'created_at' | 'name' | 'role'>;
+            profiles: Table<
+                ProfileRow,
+                | 'created_at'
+                | 'name'
+                | 'role'
+                | 'phone'
+                | 'zip_code'
+                | 'address'
+                | 'address_detail'
+            >;
             cart_items: Table<CartRow, 'user_id'>;
             orders: Table<OrderRow, 'id' | 'status' | 'created_at' | 'paid_at'>;
             order_items: Table<OrderItemRow>;
