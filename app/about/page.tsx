@@ -47,7 +47,7 @@ export default function AboutPage() {
 
         <div className="grid gap-6 md:grid-cols-3">
           {[
-            ["마우스패드", "하루 종일 책상 위에서 여러분을 빤히 지켜봐요."],
+            ["마우스패드", "하루 종일 책상 위에서 여러분을 빤히 지켜봐요." img: mousepadImg],
             ["머그컵", "커피보다 먼저 기분을 풀어 줘요."],
             ["키링", "가방 한구석에서 존재감을 뿜뿜해요."],
           ].map(([name, text]) => (
