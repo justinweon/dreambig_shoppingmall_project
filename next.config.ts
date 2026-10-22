@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 외부 이미지 주소의 허용 설정 - CartItem.tsx 에서 이미지 주소를 전달받을 수 있게 
+  // 외부 이미지 주소의 허용 설정 - CartItem.tsx 에서 이미지 주소를 전달받을 수 있게 해줌
   images: {
     remotePatterns: [
       {

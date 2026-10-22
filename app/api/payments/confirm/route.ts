@@ -114,7 +114,9 @@ export async function POST(request: Request): Promise<Response> {
         if (
             ["INVALID_INPUT", "INVALID_PAYMENT", "PAYMENT_AMOUNT_MISMATCH"].includes(error.code)
         ) {
-            return reply({message: "주문번호와 결제정보를 확인해 주세요."}, 400)
+            return reply({
+                code: error.code, // 사이트 개발자 도구에서 에러코드 확인
+                message: "주문번호와 결제정보를 확인해 주세요."}, 400)
         }
     }
     // 승인 후 저장·재조회 오류일 수 있으므로 실패로 단정하지 않음
