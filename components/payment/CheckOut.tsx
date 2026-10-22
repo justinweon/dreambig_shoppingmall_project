@@ -56,18 +56,25 @@ export default function CheckOut(): React.JSX.Element {
 
     if (isCartLoading) {
         return(
-            <main>
-                <h1>주문확인</h1>
-                <p>장바구니를 불러오는 중입니다.</p>
+            <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+                <h1 className="mb-8 text-3xl font-semibold">주문확인</h1>
+                <p className="rounded-xl border border-gray-200 bg-gray-50 p-6 text-sm leading-6 text-gray-600">
+                    장바구니를 불러오는 중입니다.
+                </p>
             </main>
         );
     }
 
     if (cartError) {
         return (
-            <main>
-                <h1>주문확인</h1>
-                <p role='alert'>{cartError}</p>
+            <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+                <h1 className="mb-8 text-3xl font-semibold">주문확인</h1>
+                <p 
+                    role='alert'
+                    className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm leading-6 text-red-700"
+                >
+                    {cartError}
+                </p>
             </main>
         )
     }
@@ -80,9 +87,11 @@ export default function CheckOut(): React.JSX.Element {
     
     if (hasMissingProduct) {
         return (
-            <main>
-                <h1>주문확인</h1>
-                <p>상품 정보를 찾을 수 없습니다. 장바구니를 확인해 주세요.</p>
+            <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+                <h1 className="mb-8 text-3xl font-semibold">주문확인</h1>
+                <p className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm leading-6 text-red-700">
+                    상품 정보를 찾을 수 없습니다. 장바구니를 확인해 주세요.
+                </p>
             </main>
         )
     }
@@ -156,14 +165,16 @@ export default function CheckOut(): React.JSX.Element {
 }
 
     return (
-        <main>
-            <h1>주문확인</h1>
+        <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+            <h1 className="mb-8 text-3xl font-semibold">주문확인</h1>
 
             {items.length === 0? (
-                <p>장바구니가 비어있습니다.</p>
+                <p className="rounded-xl border border-gray-200 bg-gray-50 p-6 text-sm leading-6 text-gray-600">
+                    장바구니가 비어있습니다.
+                </p>
             ) : (
-                <>
-                    <ul>
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:items-start">
+                    <ul className="min-w-0 divide-y divide-gray-200 rounded-xl border border-gray-200 p-6 lg:col-span-2">
                         {items.map((item) => {
                             const product = cartProducts.find(
                                 (product) => product.id === item.productId
@@ -171,53 +182,89 @@ export default function CheckOut(): React.JSX.Element {
                             if (!product) return null;
 
                             return (
-                                <li key={item.productId}>
-                                    <h2>{product.name}</h2>
-                                    <p>수량: {item.quantity}개</p>
-                                    <p>
-                                        상품 금액:{" "}
-                                        {(product.price * item.quantity).toLocaleString("ko-KR")}원
+                            <li key={item.productId}
+                                className="flex flex-col gap-3 py-5 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+                                >
+                                <div className="min-w-0">
+                                    <h2 className="text-base font-semibold text-gray-900">
+                                        {product.name}
+                                    </h2>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        수량: {item.quantity}개
                                     </p>
-                                </li>
+                                </div>
+
+                                <p className="shrink-0 text-base font-semibold text-gray-900">
+                                    상품 금액: {" "}
+                                    {(product.price * item.quantity).toLocaleString("ko-KR")}원
+                                </p>
+                            </li>
                             )
                         })}
                     </ul>
-                    <p>
-                        전체 상품 금액: {totalAmount.toLocaleString("ko-KR")}원
-                    </p>
+                    <section className="min-w-0 rounded-xl border border-gray-200 p-6">
+                        <h2 className="mb-4 text-xl font-semibold">주문 요약</h2>
+                        <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-gray-200 pb-5">
+                            <span className="text-sm text-gray-600">
+                                전체 상품 금액
+                            </span>
 
-                    <section>
+                            <strong className="text-2xl font-bold text-gray-900">
+                                {totalAmount.toLocaleString("ko-KR")}원
+                            </strong>
+                        </div>
+                        
+                        <div className="my-5 rounded-lg bg-gray-50 p-4">
+                            <h3 className="text-sm font-semibold text-gray-900">
+                                결제 수단
+                            </h3>
+                            <p className="mt-1 text-sm text-gray-600">
+                                카드결제 · 테스트
+                            </p>
+                        </div>
+
                         <button
                         type='button'
                         onClick={handleCreateOrder}
                         disabled={isCreatingOrder}
+                        className="w-full cursor-pointer rounded-lg bg-[#7ddd41] px-4 py-3 text-base font-semibold text-black transition-colors hover:bg-[#70cc37]
+                        focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {isCreatingOrder ? "주문 생성중 ..." : "주문 생성"}
                         </button>
                         {orderError && (
-                            <p role='alert'>{orderError}</p>
+                            <p 
+                            role='alert'
+                            className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-700"
+                            >
+                            {orderError}
+                            </p>
                         )}
                         {createOrder && (
-                            <section>
-                                <h2>생성된 주문</h2>
-                                <p>주문번호 : {createOrder.id}</p>
-                                <p>
-                                    DB 확정 금액 :{" "}
+                            <section className="mt-5 space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm">
+                                <h3 className="text-base font-semibold text-gray-900">생성된 주문</h3>
+                                <p className="break-all text-xs leading-5 text-gray-500">주문번호 : {createOrder.id}</p>
+                                
+                            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                                <span className="text-gray-600">
+                                    DB 확정 금액
+                                </span>
+                                <strong className="text-base font-semibold text-gray-900">
                                     {createOrder.amount_minor.toLocaleString("ko-KR")}원
-                                </p>
-                                <p>
-                                    주문 상태:{" "}
+                                </strong>
+                            </div>
+                            <p className="text-gray-600">
+                                주문 상태:{" "}
+                                <span className="font-medium text-gray-900">
                                     {createOrder.status === "paid"
                                     ? "이미 결제 완료된 주문"
-                                : "결제 대기"}
-                                </p>
+                                    : "결제 대기"}
+                                </span>
+                            </p>
                             </section>
                         )}
-                        <h2>결제수단</h2>
-                        <p>카드결제</p>
                     </section>
-
-                </>
+                </div>
             )}
         </main>
     );
