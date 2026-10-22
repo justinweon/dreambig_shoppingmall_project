@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, User } from "lucide-react";
+import { LogOut, Settings, User } from "lucide-react";
 import { UserIcon } from "@/lib/utils";
 import { supabase } from "@/shared/lib/supabase";
 import { createDreambigApi } from "@/util/api";
@@ -18,7 +18,7 @@ export default function UserMenu({ loginHref }: { loginHref: string }) {
   const user = useCurrentUser();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [profile, setProfile] = useState<{ id: string; nickname: string } | null>(null);
+  const [profile, setProfile] = useState<{ id: string; nickname: string; role: string} | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // 로그인한 사람의 닉네임 가져오기
@@ -26,7 +26,7 @@ export default function UserMenu({ loginHref }: { loginHref: string }) {
     if (!user) return;
     api.auth
       .getMyProfile()
-      .then((p) => setProfile(p ? { id: p.id, nickname: p.nickname } : null))
+      .then((p) => setProfile(p ? { id: p.id, nickname: p.nickname, role:p.role } : null))
       .catch(() => setProfile(null));
   }, [user]);
 
@@ -58,6 +58,7 @@ export default function UserMenu({ loginHref }: { loginHref: string }) {
   }
 
   const nickname = profile?.id === user.id ? profile.nickname : null;
+  const isAdmin = profile?.id === user.id && profile.role === "admin";
 
   return (
     <div ref={menuRef} className="relative">
@@ -82,6 +83,12 @@ export default function UserMenu({ loginHref }: { loginHref: string }) {
             <User size={16} />
             나의 이름표
           </Link>
+            {isAdmin && (
+            <Link href="/admin" onClick={() => setIsOpen(false)} className={itemClass}>
+              <Settings size={16} />
+              관리
+            </Link>
+          )}
           <button
             type="button"
             onClick={handleSignOut}

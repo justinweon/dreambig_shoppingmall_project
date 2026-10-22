@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { createServerClient } from "@/shared/lib/supabase";
 import { createDreambigServerApi } from "@/util/api/server";
 import Link from "next/link";
@@ -5,6 +6,7 @@ import { ORDER_STATUS_LABEL } from "@/domains/admin/utils/orderStatus";
 
 // 모든 회원의 주문을 최신순으로 보여 주는 표
 export default async function OrderList() {
+await connection();
 const api = createDreambigServerApi(createServerClient());
 
 // 주문 목록과 회원 목록을 동시에 가져온다
