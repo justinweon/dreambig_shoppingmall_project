@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/common/Header"
 import { CartProvider } from "@/components/cart/CartProvider";
 import Footer from "@/components/common/Footer";
+import HideOnAdmin from "@/components/common/HideOnAdmin";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,9 +29,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <CartProvider>
+          <HideOnAdmin>
           <Header />
+          </HideOnAdmin>
           {children}
+          <HideOnAdmin>
           <Footer />
+          </HideOnAdmin>
         </CartProvider>
         
       </body>
