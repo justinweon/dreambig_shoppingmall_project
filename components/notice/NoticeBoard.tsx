@@ -9,7 +9,7 @@ import { loginHref, useCurrentUser } from "@/lib/auth";
 import { noticeBoardKeys, noticeBoardLabels } from "@/util/data/notices";
 import type { NoticeBoardKey } from "@/util/types/notice";
 import NoticeEditorModal from "./NoticeEditorModal";
-import { addPost, canWriteTo, countComments, useNoticeState } from "./noticeStore";
+import { addPost, canWriteTo, useNoticeList } from "./noticeStore";
 
 const PER_PAGE = 10;
 
@@ -22,11 +22,11 @@ export default function NoticeBoard() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const user = useCurrentUser();
-  const { posts, comments } = useNoticeState();
   const [isWriting, setIsWriting] = useState(false);
 
   // 탭, 검색어, 페이지는 URL에 둬서 새로고침과 뒤로 가기에도 유지된다.
   const board = parseBoard(searchParams.get("board"));
+  const { posts: list, commentCounts, isLoading, hasError } = useNoticeList(board);
   const q = searchParams.get("q") ?? "";
   const requestedPage = Number(searchParams.get("page")) || 1;
 
@@ -40,7 +40,6 @@ export default function NoticeBoard() {
     router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }
 
-  const list = posts.filter((p) => p.board === board);
   const keyword = q.trim();
   const filtered = keyword ? list.filter((p) => p.title.includes(keyword)) : list;
   const pageCount = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
@@ -118,7 +117,7 @@ export default function NoticeBoard() {
           </thead>
           <tbody>
             {rows.map((post) => {
-              const commentCount = countComments(comments[post.id]);
+              const commentCount = commentCounts[post.id] ?? 0;
               return (
                 <tr key={post.id} className="border-b border-[#ededed] hover:bg-[#fafafa]">
                   <td className="px-2 py-4 text-center text-sm text-[#6b6b6b]">
@@ -137,7 +136,7 @@ export default function NoticeBoard() {
                           [{commentCount}]
                         </span>
                       )}
-                      {user?.name === post.author && (
+                      {user?.id === post.authorId && (
                         <span className="rounded-full bg-[#7ed957] px-2 py-0.5 text-[11px] font-bold text-[#1a1a1a]">
                           내 글
                         </span>
@@ -155,11 +154,20 @@ export default function NoticeBoard() {
         </table>
       </div>
 
-      {filtered.length === 0 && (
+      {isLoading ? (
+        <p className="pt-8 pb-2 text-center text-sm text-[#6b6b6b]">글을 불러오는 중이에요...</p>
+      ) : hasError ? (
         <div className="flex flex-col items-center gap-3 pt-8 pb-2">
-          <p className="text-base font-extrabold">{keyword ? "찾는 글이 없어요." : "아직 글이 없어요."}</p>
-          {keyword && <p className="text-sm text-[#555]">다른 낱말로 다시 찾아볼까요?</p>}
+          <p className="text-base font-extrabold">글을 불러오지 못했어요.</p>
+          <p className="text-sm text-[#555]">잠시 후 새로고침해 주세요.</p>
         </div>
+      ) : (
+        filtered.length === 0 && (
+          <div className="flex flex-col items-center gap-3 pt-8 pb-2">
+            <p className="text-base font-extrabold">{keyword ? "찾는 글이 없어요." : "아직 글이 없어요."}</p>
+            {keyword && <p className="text-sm text-[#555]">다른 낱말로 다시 찾아볼까요?</p>}
+          </div>
+        )
       )}
 
       {pageCount > 1 && (
@@ -186,8 +194,8 @@ export default function NoticeBoard() {
           mode="new"
           board={board}
           onClose={() => setIsWriting(false)}
-          onSave={(title, content) => {
-            const post = addPost({ board, title, content, author: user.name });
+          onSave={async (title, content) => {
+            const post = await addPost({ board, title, content });
             setIsWriting(false);
             router.push(`/notice/${post.id}`);
           }}
