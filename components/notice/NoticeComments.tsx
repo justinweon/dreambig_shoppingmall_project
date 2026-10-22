@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { loginHref, useCurrentUser } from "@/lib/auth";
 import type { NoticeComment } from "@/util/types/notice";
-import { addComment, addReply, countComments } from "./noticeStore";
+import { addComment, countComments } from "./noticeStore";
 
 const fieldClass =
   "w-full resize-y rounded-xl border border-[#d6d6d6] bg-white px-3.5 py-3 text-[15px] leading-5.5 text-[#1a1a1a] focus:border-[#1a1a1a] focus:outline-none";
@@ -17,28 +17,45 @@ const lineButtonClass =
 interface NoticeCommentsProps {
   postId: string;
   comments: readonly NoticeComment[];
+  /** 댓글/답글을 저장한 뒤 목록을 다시 불러온다. */
+  onChange: () => void;
 }
 
-export default function NoticeComments({ postId, comments }: NoticeCommentsProps) {
+export default function NoticeComments({ postId, comments, onChange }: NoticeCommentsProps) {
   const user = useCurrentUser();
   const commentFieldId = useId();
   const [text, setText] = useState("");
   const [replyTo, setReplyTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
-  function submitComment() {
-    const trimmed = text.trim();
-    if (!user || !trimmed) return;
-    addComment(postId, user.name, trimmed);
-    setText("");
+  async function save(commentText: string, parentId?: string) {
+    setIsSaving(true);
+    try {
+      await addComment(postId, commentText, parentId);
+      onChange();
+      return true;
+    } catch {
+      window.alert("저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
   }
 
-  function submitReply(commentId: string) {
+  async function submitComment() {
+    const trimmed = text.trim();
+    if (!user || !trimmed) return;
+    if (await save(trimmed)) setText("");
+  }
+
+  async function submitReply(commentId: string) {
     const trimmed = replyText.trim();
     if (!user || !trimmed) return;
-    addReply(postId, commentId, user.name, trimmed);
-    setReplyTo(null);
-    setReplyText("");
+    if (await save(trimmed, commentId)) {
+      setReplyTo(null);
+      setReplyText("");
+    }
   }
 
   return (
@@ -64,7 +81,7 @@ export default function NoticeComments({ postId, comments }: NoticeCommentsProps
             <button
               type="button"
               onClick={submitComment}
-              disabled={!text.trim()}
+              disabled={!text.trim() || isSaving}
               className={`h-10 px-5.5 text-sm ${greenButtonClass}`}
             >
               댓글 등록
@@ -148,7 +165,7 @@ export default function NoticeComments({ postId, comments }: NoticeCommentsProps
                   <button
                     type="button"
                     onClick={() => submitReply(comment.id)}
-                    disabled={!replyText.trim()}
+                    disabled={!replyText.trim() || isSaving}
                     className={`h-9 px-4.5 text-[13px] ${greenButtonClass}`}
                   >
                     답글 등록

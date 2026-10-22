@@ -58,6 +58,16 @@ const dashboard = await api.admin.getDashboardSummary();
 | 주문 상세 | `orders.getMyOrder(orderId)` | 본인 주문 또는 null |
 | 주문 상세 | `orders.listMyOrderItems(orderId)` | 본인 주문의 상품 스냅샷 배열, 없으면 빈 배열 |
 | 결제 내역 | `orders.getMyPayment(orderId)` | 본인 결제 또는 null, payment_key 제외 |
+| 게시판 | `notices.listPosts(board)` | board(`notice`/`free`)의 전체 글, 최신순 |
+| 게시판 | `notices.getPost(postId)` | 글 또는 null |
+| 게시판 | `notices.createPost({ board, title, content })` | 작성된 글. 작성자/닉네임은 로그인 사용자로 채움. 공지는 관리자만 DB 정책 통과 |
+| 게시판 | `notices.updatePost(postId, { title, content })` | 수정된 글. 본인 글 또는 관리자만, 아니면 오류 |
+| 게시판 | `notices.deletePost(postId)` | 삭제된 id 배열. 권한이 없으면 빈 배열 |
+| 게시판 | `notices.increaseViews(postId)` | 조회수 1 증가. 비로그인도 가능 |
+| 게시판 | `notices.listComments(postId)` | 댓글과 답글(parent_id 있음)을 작성순으로 |
+| 게시판 | `notices.countComments(postIds)` | `{ [postId]: 댓글+답글 수 }`, 없는 글은 키 없음 |
+| 게시판 | `notices.createComment(postId, text, parentId?)` | 작성된 댓글. parentId가 있으면 답글 |
+| 게시판 | `notices.deleteComment(commentId)` | 삭제된 id 배열. 답글도 함께 삭제 |
 | 결제, 서버 | `payments.confirmTossPayment({ orderId, paymentKey, amount })` | Toss 승인 및 검증 후 DB 반영 결과, payment_key 제외 |
 | 관리자, 서버 | `admin.getDashboardSummary()` | 상품 수, 회원 수, 결제 대기 주문 수, 결제 완료 주문 수 |
 | 관리자, 서버 | `admin.listProfiles(page?, pageSize?)` | 회원 프로필 목록 |
