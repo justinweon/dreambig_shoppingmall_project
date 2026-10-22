@@ -10,14 +10,16 @@ import {
 } from "react";
 
 import type { CartItem, AddToCartRequest } from "@/util/types/cart";
+import type { Product } from "@/util/types/product";
 import type { CartAddResult } from "@/components/product-detail/cartConnection";
-import { getProductById } from "@/util/product";
 import { supabase } from "@/shared/lib/supabase-browser";
-import { fetchCartItems, addCartItem, updateCartItem, deleteCartItem } from "./cartRepository";
+import { fetchCartItems, addCartItem, updateCartItem, deleteCartItem, fetchCartProduct } from "./cartRepository";
 
 // 다른 컴포넌트에 제공할 값의 타입
 interface CartContextValue {
   items: readonly CartItem[];
+  cartProducts: readonly Product[];
+
   addItem: (request: AddToCartRequest) => Promise<CartAddResult>;
 
   isCartOpen: boolean;
@@ -41,6 +43,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   // 화면에 표시할 장바구니 목록
   const [items, setItems] = useState<readonly CartItem[]>([]);
+  const [cartProducts, setCartProducts] = useState<readonly Product[]>([]);
 
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -77,6 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
         itemsRef.current = [];
         setItems([]);
+        setCartProducts([]);
         setCartError(null);
         setIsCartLoading(userId !== null);
 
@@ -84,15 +88,31 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
         timer = setTimeout(async () => {
           try {
+            // 회원의 상품 ID와 수량 조회
             const nextItems = await fetchCartItems(userId);
 
             if (!active || thisRequest !== requestNumber) return;
 
+            // 각 상품의 DB 정보를 조회하고 모두 끝날 때까지 기다림
+            const nextProducts = await Promise.all(
+              nextItems.map((item) => 
+              fetchCartProduct(item.productId),
+              ),
+            );
+
+            // 상품 조회 중 계정이 바뀌었으면 결과 무시
+            if (!active || thisRequest !== requestNumber) return;
+
+            // 장바구니 항목과 상품 정보를 함께 반영
             itemsRef.current = nextItems;
             setItems(nextItems);
+            setCartProducts(nextProducts);
+
+            // 두 조회가 모두 성공한 뒤 저장 작업 허용
             if (cartOwnerRef.current) {
               cartOwnerRef.current.ready = true;
             }
+
           } catch {
             if (!active || thisRequest !== requestNumber) return;
 
@@ -121,10 +141,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     productId,
     quantity,
   }: AddToCartRequest): Promise<CartAddResult>{
-    if (!getProductById(productId)) {
-      return { ok: false, message: "상품을 찾을 수 없습니다."}
-    }
-
     if (!Number.isSafeInteger(quantity) || quantity < 1) {
       return { ok: false, message: "수량은 1 이상의 정수여야 합니다."}
     }
@@ -149,15 +165,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
     addPendingRef.current = true;
 
     try {
-      const savedItem = await addCartItem({ productId, quantity});
+      // 상품 존재 여부·원화 통화·가격을 DB 정보로 확인
+      const product = await fetchCartProduct(productId);
 
+      // 상품 조회 중 계정이 바뀌었으면 담기 요청 중단
       if (cartOwnerRef.current !== owner) {
         return {
           ok: false,
           message: "로그인 상태가 변경되었습니다. 현재 장바구니를 확인해 주세요.",
         };
       }
-      
+      // 상품 확인이 끝난 뒤 DB에 담기
+      const savedItem = await addCartItem({ productId, quantity });
+
+      // DB 저장 중 계정이 바뀌었으면 화면 반영 중단
+      if (cartOwnerRef.current !== owner) {
+        return {
+          ok: false,
+          message: "로그인 상태가 변경되었습니다. 현재 장바구니를 확인해 주세요.",
+        };
+      }
+
       const current = itemsRef.current;
       const existing = current.some(
         (item) => item.productId === productId,
@@ -168,6 +196,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
         item.productId === savedItem.productId ? savedItem : item,
       )
       : [...current, savedItem];
+
+      // 같은 상품 이전 정보를 제거하고 최신 DB 정보 보관
+      setCartProducts((currentProducts) =>[
+        ...currentProducts.filter((item) => item.id !== product.id),
+        product,
+      ]);
 
       itemsRef.current = nextItems;
       setItems(nextItems);
@@ -276,6 +310,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return (
     <CartContext.Provider value={{
       items,
+      cartProducts,
       addItem,
       isCartOpen,
       setIsCartOpen,

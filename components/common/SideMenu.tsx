@@ -6,7 +6,6 @@ import { CardSimIcon, ChevronRight, VerifiedIcon } from "lucide-react";
 import { ShoppingBasket } from "lucide-react";
 import CartRecomms from "../cart/CartRecomms";
 import CartItem from "@/components/cart/CartItem";
-import { products } from "@/util/data/products";
 import { useCart } from "../cart/CartProvider";
 import { ShippingIcon } from "@/lib/utils";
 import { MdShoppingCartCheckout } from "react-icons/md";
@@ -26,12 +25,18 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
 
     const dialogRef = useRef<HTMLDialogElement>(null);
 
-    const { items, updateQuantity, removeItem, isCartLoading, cartError } = useCart();
+    const { items, cartProducts ,updateQuantity, removeItem, isCartLoading, cartError } = useCart();
 
     const product_num = items.reduce((total, item) => total + item.quantity, 0);
+    // 담긴 상품 중 DB 상품 정보가 없는 항목 확인
+    const hasMissingProduct = items.some(
+        (item) => !cartProducts.some(
+            (product) => product.id === item.productId
+        )
+    );
 
     const totalPrice = items.reduce((total, item) => {
-        const product = products.find((p) => p.id === item.productId);
+        const product = cartProducts.find((p) => p.id === item.productId);
         if (!product) return total;
         return total + product.price * item.quantity;
     }, 0);
@@ -140,6 +145,10 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                 <p className='p-5'>장바구니를 불러오는 중입니다.</p>
             ) : cartError ? (
                 <p className='p-5' role='alert'>{cartError}</p>
+            ) : hasMissingProduct ? (
+                <p className="p-5" role='alert'>
+                    상품 정보를 찾을 수 없습니다. 새로고침 후 확인해 주세요.
+                </p>
             ) : items.length === 0 ? (
                 <div className="h-[350px] flex flex-col items-center justify-center gap-4">
                     <div>
@@ -182,7 +191,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                 <div>
                     {items.map((item) => {
                         // 장바구니의 상품 ID로 이름, 가격, 이미지를 찾는다.
-                        const product = products.find(
+                        const product = cartProducts.find(
                             (product) => product.id === item.productId,
                         );
 
@@ -204,7 +213,7 @@ export default function SideMenu({ isCartOpen, setIsCartOpen }: SideMenuProps) {
                 </div>
             )}
 
-    {!isCartLoading && !cartError && items.length > 0 && (
+    {!isCartLoading && !cartError && !hasMissingProduct && items.length > 0 && (
                 <div className="border-b p-5">
                     <div className="flex justify-between text-lg">
                         <span>총 결제금액</span>
