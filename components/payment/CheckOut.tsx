@@ -10,11 +10,15 @@ import {
 } from "./orderRepository"
 
 import { useCart } from "../cart/CartProvider"
+import { requestTestCardPayment } from "./tossPayment";
 
 export default function CheckOut(): React.JSX.Element {
     const {items, cartProducts, isCartLoading, cartError} = useCart();
     // 주문 생성 진행 상태와 오류
     const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+
+    const [isRequestingPayment, setIsRequestingPayment] = useState(false);
+
     const [ orderError, setOrderError ] = useState<string | null>(null);
 
     // 생성 당시 장바구니와 주문 결과를 함께 보관
@@ -163,7 +167,59 @@ export default function CheckOut(): React.JSX.Element {
         }
     }
 }
+    async function handleTestPayment(): Promise<void> {
+        if(
+            orderPendingRef.current ||
+            isCartLoading ||
+            cartError ||
+            hasMissingProduct
+        ) {
+            return;
+        }
 
+        const scope = orderScopeRef.current;
+        const order = createOrder;
+
+        if (!scope?.userId || !order) {
+            setOrderError("로그인 상태와 생ㅅ어된 주문을 확인해 주세요.");
+            return;
+        }
+        
+        if (order.user_id !== scope.userId) {
+            setOrderError("주문의 회원 정보가 일치하지 않습니다.");
+            return;
+        }
+        
+        if (order.status !== "pending_payment") {
+            setOrderError("결제 대기 상태의 주문만 결제 할 수 있습니다.");
+            return;
+        }
+
+        // 주문 생성 버튼과 같은 잠금 사용
+        orderPendingRef.current = true;
+        setIsRequestingPayment(true);
+        setOrderError(null);
+
+        const isCurrent = () => orderScopeRef.current === scope;
+
+        try {
+            await requestTestCardPayment(order, isCurrent);
+        } catch (error) {
+            if (isCurrent()) {
+                setOrderError(
+                    error instanceof Error
+                    ? error.message
+                    : "결제창을 열지 못했거나 진행이 중단되었습니다."
+                );
+            }
+        } finally {
+            orderPendingRef.current = false;
+
+            if (orderScopeRef.current !== null) {
+                setIsRequestingPayment(false);
+            }
+        }
+    }
     return (
         <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
             <h1 className="mb-8 text-3xl font-semibold">주문확인</h1>
@@ -226,7 +282,7 @@ export default function CheckOut(): React.JSX.Element {
                         <button
                         type='button'
                         onClick={handleCreateOrder}
-                        disabled={isCreatingOrder}
+                        disabled={isCreatingOrder || isRequestingPayment}
                         className="w-full cursor-pointer rounded-lg bg-[#7ddd41] px-4 py-3 text-base font-semibold text-black transition-colors hover:bg-[#70cc37]
                         focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-50"
                         >
@@ -261,6 +317,17 @@ export default function CheckOut(): React.JSX.Element {
                                     : "결제 대기"}
                                 </span>
                             </p>
+                            <button
+                            type="button"
+                            onClick={handleTestPayment}
+                            disabled={
+                                isCreatingOrder ||
+                                isRequestingPayment ||
+                                createOrder.status !== "pending_payment"
+                            }
+                            className="w-full cursor-pointer rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-50">
+                                {isRequestingPayment ? "결제창 처리 중... " : "테스트 카드 결제"}
+                            </button>
                             </section>
                         )}
                     </section>

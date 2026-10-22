@@ -1,5 +1,6 @@
 // 정기
 import Link from "next/link";
+import type { ConfirmedPayment } from "@/components/payment/tossPayment";
 
 export default function PaymentSuccessPage(): React.JSX.Element {
     return (
