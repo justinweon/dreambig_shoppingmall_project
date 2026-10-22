@@ -33,7 +33,7 @@ export default function MyPage() {
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 들어오자마자 손목띠 확인 → 내 정보 가져오기
+  //로그인 확인. 내 정보 가져오기
   useEffect(() => {
     const load = async () => {
       const user = await api.auth.getCurrentUser().catch(() => null);
