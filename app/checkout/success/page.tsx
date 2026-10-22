@@ -1,3 +1,4 @@
+// 정기
 import Link from "next/link";
 
 export default function PaymentSuccessPage(): React.JSX.Element {
