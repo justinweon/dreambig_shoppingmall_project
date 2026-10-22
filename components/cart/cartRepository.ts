@@ -2,6 +2,7 @@
 import { supabase } from "@/shared/lib/supabase-browser";
 import type { CartItem, AddToCartRequest } from "@/util/types/cart";
 import { createDreambigApi } from "@/util/api";
+import type { Product } from "@/util/types/product";
 
 const api = createDreambigApi(supabase);
 
@@ -76,4 +77,38 @@ export async function deleteCartItem(
     productId: CartItem["productId"]
 ): Promise<void> {
     await api.cart.deleteMyCartItem(productId);
+}
+
+// 장바구니에 표시할 DB 상품 정보 조회
+export async function fetchCartProduct(
+    productId: CartItem["productId"]
+): Promise<Product> {
+    const data = await api.products.getProduct(productId);
+
+    // 상품이 없으면 정적 상품으로 대체하지 않고 오류 전달
+    if (!data) {
+        throw new Error("상품 정보를 찾을 수 없습니다.");
+    }
+
+    // 현재 결제 범위는 원화 상품만 허용
+    if (data.currency !== "KRW") {
+        throw new Error("원화 상품만 결제 할 수 있습니다.");
+    }
+
+    // 표시할 가격이 유효한 원화 정수인지 검사
+    if (!Number.isSafeInteger(data.price_minor) || data.price_minor < 0) {
+        throw new Error("상품 가격을 확인할 수 없습니다.")
+    }
+    
+    // DB 컬럼명을 기존 화면용 이름으로 변환
+    return {
+        id: data.id,
+        name: data.name,
+        price: data.price_minor,
+        currency: data.currency,
+        category: data.category,
+        imageUrl: data.image_url,
+        eraseImageUrl: data.erase_image_url,
+        description: data.description,
+    };
 }

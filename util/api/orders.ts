@@ -17,7 +17,7 @@ export function createOrdersApi(client: ApiClient) {
         ): Promise<OrderRow> {
             await requireUser(client);
             return unwrap(
-                await client.rpc('create_order', {
+                await client.rpc('create_order', { // 멱등성
                     p_request_id: requireUuid(requestId),
                     p_items: validateItems(items) as unknown as Json,
                 }),
