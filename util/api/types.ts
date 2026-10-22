@@ -95,6 +95,28 @@ export type PaymentRow = {
     approved_at: string;
     created_at: string;
 };
+export type NoticeBoard = 'notice' | 'free';
+/** notice는 관리자만, free는 로그인 사용자 누구나 작성. author_nickname은 작성 시점 스냅샷. */
+export type NoticePostRow = {
+    id: number;
+    board: NoticeBoard;
+    title: string;
+    content: string;
+    author_id: string;
+    author_nickname: string;
+    views: number;
+    created_at: string;
+};
+/** parent_id가 null이면 댓글, 있으면 답글. */
+export type NoticeCommentRow = {
+    id: number;
+    post_id: number;
+    parent_id: number | null;
+    author_id: string;
+    author_nickname: string;
+    text: string;
+    created_at: string;
+};
 type Table<Row extends object, Optional extends keyof Row = never> = {
     Row: Row;
     Insert: Omit<Row, Optional> & Partial<Pick<Row, Optional>>;
@@ -123,6 +145,14 @@ export type Database = {
                 PaymentRow,
                 'id' | 'provider' | 'status' | 'created_at'
             >;
+            notice_posts: Table<
+                NoticePostRow,
+                'id' | 'author_id' | 'views' | 'created_at'
+            >;
+            notice_comments: Table<
+                NoticeCommentRow,
+                'id' | 'parent_id' | 'author_id' | 'created_at'
+            >;
         };
         Views: { [_ in never]: never };
         Functions: {
@@ -143,6 +173,10 @@ export type Database = {
                     p_approved_at: string;
                 };
                 Returns: Json;
+            };
+            increase_notice_views: {
+                Args: { p_post_id: number };
+                Returns: undefined;
             };
         };
         Enums: { [_ in never]: never };

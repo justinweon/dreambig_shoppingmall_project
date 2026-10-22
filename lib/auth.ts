@@ -2,70 +2,79 @@
 
 import { useSyncExternalStore } from "react";
 
-// 로그인 페이지가 아직 없어서 임시로 localStorage에 로그인 사용자를 저장한다.
-// 로그인 페이지를 만들면 로그인 성공 시 setCurrentUser(...)를, 로그아웃 시 setCurrentUser(null)을 호출하면 된다.
-// 실제 인증(세션/토큰)으로 바꿀 때는 이 파일만 교체한다.
+import { supabase } from "@/shared/lib/supabase";
+
+// 로그인은 signInAction이 Supabase 세션 쿠키에 저장한다. 여기서는 그 세션과 본인 profiles 행을 읽어
+// 화면에서 쓸 사용자 정보를 만든다. isAdmin은 화면 표시용이고 실제 권한은 DB 정책이 확인한다.
 
 export const LOGIN_PATH = "/login";
 
 export interface CurrentUser {
+  readonly id: string;
+  /** profiles.nickname */
   readonly name: string;
-  /** 공지 게시판 글쓰기 권한 */
+  /** 공지 게시판 글쓰기 권한 (profiles.role === "admin") */
   readonly isAdmin: boolean;
 }
 
-const STORAGE_KEY = "hunmin-user";
-const CHANGE_EVENT = "hunmin-user-change";
+const listeners = new Set<() => void>();
+let currentUser: CurrentUser | null = null;
+// 마지막으로 프로필을 읽은 사용자 id. undefined면 아직 읽지 않았다.
+let loadedUserId: string | null | undefined;
+let isListening = false;
 
-// 같은 문자열이면 같은 객체를 돌려줘야 useSyncExternalStore가 무한 렌더링하지 않는다.
-let cachedRaw: string | null = null;
-let cachedUser: CurrentUser | null = null;
+function emit(user: CurrentUser | null) {
+  currentUser = user;
+  listeners.forEach((listener) => listener());
+}
 
-function readUser(): CurrentUser | null {
-  let raw: string | null = null;
-  try {
-    raw = window.localStorage.getItem(STORAGE_KEY);
-  } catch {
-    return null;
+async function loadProfile(userId: string | null) {
+  if (userId === loadedUserId) return;
+  loadedUserId = userId;
+  if (!userId) {
+    emit(null);
+    return;
   }
-  if (raw === cachedRaw) return cachedUser;
-  cachedRaw = raw;
-  try {
-    const parsed = raw ? JSON.parse(raw) : null;
-    cachedUser = parsed && typeof parsed.name === "string"
-      ? { name: parsed.name, isAdmin: parsed.isAdmin === true }
-      : null;
-  } catch {
-    cachedUser = null;
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("nickname, role")
+    .eq("id", userId)
+    .maybeSingle();
+  // 읽는 동안 다른 사용자로 바뀌었으면 늦게 온 결과는 버린다.
+  if (loadedUserId !== userId) return;
+  if (error) {
+    loadedUserId = undefined; // 다음 구독 때 다시 시도한다.
+    return;
   }
-  return cachedUser;
+  emit(data ? { id: userId, name: data.nickname, isAdmin: data.role === "admin" } : null);
+}
+
+function refresh() {
+  supabase.auth.getSession().then(({ data }) => loadProfile(data.session?.user.id ?? null));
 }
 
 function subscribe(onChange: () => void) {
-  window.addEventListener("storage", onChange);
-  window.addEventListener(CHANGE_EVENT, onChange);
+  listeners.add(onChange);
+  if (!isListening) {
+    isListening = true;
+    // 콜백 안에서 바로 Supabase를 호출하면 멈출 수 있어서 다음 틱으로 미룬다.
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setTimeout(() => loadProfile(session?.user.id ?? null), 0);
+    });
+  }
+  // 로그인 액션 뒤 화면 이동은 새로고침이 아니라서, 화면이 구독할 때마다 세션을 다시 확인한다.
+  refresh();
   return () => {
-    window.removeEventListener("storage", onChange);
-    window.removeEventListener(CHANGE_EVENT, onChange);
+    listeners.delete(onChange);
   };
 }
 
-export function setCurrentUser(user: CurrentUser | null) {
-  try {
-    if (user) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    else window.localStorage.removeItem(STORAGE_KEY);
-  } catch {
-    // 저장소를 쓸 수 없는 환경(시크릿 모드 등)은 무시한다.
-  }
-  window.dispatchEvent(new Event(CHANGE_EVENT));
-}
-
-/** 로그인하지 않았으면 null. 서버 렌더링과 첫 hydration에서도 null이다. */
+/** 로그인하지 않았거나 아직 확인 중이면 null. 서버 렌더링과 첫 hydration에서도 null이다. */
 export function useCurrentUser(): CurrentUser | null {
-  return useSyncExternalStore(subscribe, readUser, () => null);
+  return useSyncExternalStore(subscribe, () => currentUser, () => null);
 }
 
-/** 로그인 후 돌아올 주소를 붙인 로그인 페이지 주소 */
+/** 로그인 후 돌아올 주소를 붙인 로그인 페이지 주소. RedirectToField가 redirectTo를 읽는다. */
 export function loginHref(returnTo: string) {
-  return `${LOGIN_PATH}?next=${encodeURIComponent(returnTo)}`;
+  return `${LOGIN_PATH}?redirectTo=${encodeURIComponent(returnTo)}`;
 }

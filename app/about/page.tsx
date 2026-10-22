@@ -37,27 +37,13 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* Goods */}
-      {/* <section className="mx-auto flex max-w-[1200px] flex-col gap-14 px-8 py-[120px]">
+    
+         {/* Goods */}
+      <section className="mx-auto flex max-w-[1200px] flex-col gap-14 px-8 py-[120px]">
         <div className="text-center">
           <h2 className="text-4xl font-black">우리가 만드는 건 작은 즐거움이에요</h2>
           <p className="mt-4 text-lg text-[#555]">별일 없는 하루에도 피식 웃을 일 하나쯤은 꼭 있어야 하니까요.</p>
         </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          {[
-            ["마우스패드", "하루 종일 책상 위에서 여러분을 빤히 지켜봐요." img: mousepadImg],
-            ["머그컵", "커피보다 먼저 기분을 풀어 줘요."],
-            ["키링", "가방 한구석에서 존재감을 뿜뿜해요."],
-          ].map(([name, text]) => (
-            <div key={name} className="rounded-[20px] border border-[#ededed] p-6 shadow-sm">
-              <div className="aspect-[4/3] rounded-xl bg-[#f3f2ef]" />
-              <h3 className="mt-4 text-xl font-bold">{name}</h3>
-              <p className="mt-2 text-[#555]">{text}</p>
-            </div>
-          ))}
-        </div> */}
 
         <div className="grid gap-6 md:grid-cols-3">
           {[
@@ -67,27 +53,14 @@ export default function AboutPage() {
           ].map(({ name, text, img }) => (
             <div key={name} className="rounded-[20px] border border-[#ededed] p-6 shadow-sm">
               <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-[#f3f2ef]">
-                <Image src={img} alt={name} fill className="object-cover" />
+                <Image src={img} alt={name} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
               </div>
               <h3 className="mt-4 text-xl font-bold">{name}</h3>
               <p className="mt-2 text-[#555]">{text}</p>
             </div>
           ))}
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      </section>
 
 
 

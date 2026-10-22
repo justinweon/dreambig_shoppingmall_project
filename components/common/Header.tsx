@@ -48,7 +48,7 @@ export default function Header() {
               >
                 문화상품
               </Link>
-              <button>도움마당</button>
+              <Link href="/notice">도움마당</Link>
             </nav>
           </div>
 

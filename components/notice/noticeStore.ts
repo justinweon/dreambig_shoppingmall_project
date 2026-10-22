@@ -1,82 +1,135 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { CurrentUser } from "@/lib/auth";
-import { seedNoticeComments, seedNoticePosts } from "@/util/data/notices";
-import type {
-  NoticeBoardKey,
-  NoticeComment,
-  NoticeCommentMap,
-  NoticePost,
-} from "@/util/types/notice";
+import { supabase } from "@/shared/lib/supabase";
+import { createDreambigApi, type NoticeCommentRow, type NoticePostRow } from "@/util/api";
+import type { NoticeBoardKey, NoticeComment, NoticePost } from "@/util/types/notice";
 
-// 백엔드가 없어서 게시글과 댓글을 localStorage에 저장한다.
-// API로 바꿀 때는 이 파일의 액션 함수만 교체하면 화면 컴포넌트는 그대로 쓸 수 있다.
+// 게시글과 댓글은 Supabase에 저장한다. 공지 작성 같은 권한은 DB 정책이 최종 확인하고,
+// 아래 can* 함수는 화면에서 버튼을 보여 줄지 정하는 데만 쓴다.
 
-interface NoticeState {
-  readonly posts: readonly NoticePost[];
-  readonly comments: NoticeCommentMap;
+const api = createDreambigApi(supabase).notices;
+
+function dateLabel(iso: string) {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
 }
 
-const STORAGE_KEY = "hunmin-notice-v1";
-const SEED_STATE: NoticeState = { posts: seedNoticePosts, comments: seedNoticeComments };
-
-let state: NoticeState | null = null;
-const listeners = new Set<() => void>();
-
-function load(): NoticeState {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as NoticeState;
-      if (Array.isArray(parsed.posts) && parsed.comments) return parsed;
-    }
-  } catch {
-    // 손상된 값이면 예시 데이터로 시작한다.
-  }
-  return SEED_STATE;
-}
-
-function getSnapshot(): NoticeState {
-  if (!state) state = load();
-  return state;
-}
-
-function getServerSnapshot(): NoticeState {
-  return SEED_STATE;
-}
-
-function subscribe(onChange: () => void) {
-  listeners.add(onChange);
-  return () => {
-    listeners.delete(onChange);
+function toPost(row: NoticePostRow): NoticePost {
+  return {
+    id: String(row.id),
+    board: row.board,
+    title: row.title,
+    authorId: row.author_id,
+    author: row.author_nickname,
+    date: dateLabel(row.created_at),
+    views: row.views,
+    content: row.content,
   };
 }
 
-function update(next: NoticeState) {
-  state = next;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch {
-    // 저장 실패해도 현재 탭에서는 계속 동작한다.
-  }
-  listeners.forEach((listener) => listener());
+/** 작성순 댓글 행을 댓글 아래 답글 구조로 묶는다. */
+function toComments(rows: readonly NoticeCommentRow[]): NoticeComment[] {
+  const base = (row: NoticeCommentRow) => ({
+    id: String(row.id),
+    authorId: row.author_id,
+    author: row.author_nickname,
+    date: dateLabel(row.created_at),
+    text: row.text,
+  });
+  const comments = rows.filter((row) => row.parent_id === null).map((row) => ({ ...base(row), replies: [] }));
+  return comments.map((comment) => ({
+    ...comment,
+    replies: rows.filter((row) => String(row.parent_id) === comment.id).map(base),
+  }));
 }
 
-export function useNoticeState() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+/** 주소의 글 번호. 숫자가 아니면 null */
+function toPostId(id: string) {
+  const postId = Number(id);
+  return Number.isInteger(postId) && postId > 0 ? postId : null;
 }
 
-/** 서버 렌더링/hydration 중이면 false. localStorage 데이터가 아직 반영되지 않은 상태다. */
-export function useIsHydrated() {
-  return useSyncExternalStore(subscribe, () => true, () => false);
+interface ListResult {
+  readonly board: NoticeBoardKey;
+  readonly posts: readonly NoticePost[];
+  /** 글 id별 댓글+답글 개수 */
+  readonly commentCounts: Readonly<Record<string, number>>;
+  readonly hasError: boolean;
 }
 
-export function todayLabel() {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
+/** board의 전체 글(최신순)과 글별 댓글 수. 탭을 바꾸면 다시 불러온다. */
+export function useNoticeList(board: NoticeBoardKey) {
+  const [result, setResult] = useState<ListResult | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+    (async () => {
+      const rows = await api.listPosts(board);
+      const counts = await api.countComments(rows.map((row) => row.id));
+      return {
+        posts: rows.map(toPost),
+        commentCounts: Object.fromEntries(Object.entries(counts)),
+      };
+    })().then(
+      (data) => !ignore && setResult({ board, ...data, hasError: false }),
+      () => !ignore && setResult({ board, posts: [], commentCounts: {}, hasError: true }),
+    );
+    return () => {
+      ignore = true;
+    };
+  }, [board]);
+
+  const current = result?.board === board ? result : null;
+  return {
+    posts: current?.posts ?? [],
+    commentCounts: current?.commentCounts ?? {},
+    isLoading: !current,
+    hasError: current?.hasError ?? false,
+  };
+}
+
+interface PostResult {
+  readonly id: string;
+  readonly post: NoticePost | null;
+  readonly comments: readonly NoticeComment[];
+  readonly hasError: boolean;
+}
+
+/** 글 하나와 댓글. 수정/댓글 작성 뒤 reload()로 다시 불러온다. */
+export function useNoticePost(id: string) {
+  const [result, setResult] = useState<PostResult | null>(null);
+  const [version, setVersion] = useState(0);
+
+  useEffect(() => {
+    let ignore = false;
+    const postId = toPostId(id);
+    const load = postId
+      ? Promise.all([api.getPost(postId), api.listComments(postId)])
+      : Promise.resolve([null, []] as const);
+    load.then(
+      ([row, commentRows]) =>
+        !ignore && setResult({ id, post: row && toPost(row), comments: toComments(commentRows), hasError: false }),
+      () => !ignore && setResult({ id, post: null, comments: [], hasError: true }),
+    );
+    return () => {
+      ignore = true;
+    };
+  }, [id, version]);
+
+  const reload = useCallback(() => setVersion((v) => v + 1), []);
+  // 다시 불러오는 동안에는 이전 내용을 그대로 보여 준다.
+  const current = result?.id === id ? result : null;
+  return {
+    post: current?.post ?? null,
+    comments: current?.comments ?? [],
+    isLoading: !current,
+    hasError: current?.hasError ?? false,
+    reload,
+  };
 }
 
 /** 공지는 관리자만, 자유게시판은 로그인한 누구나 쓸 수 있다. */
@@ -87,66 +140,32 @@ export function canWriteTo(board: NoticeBoardKey, user: CurrentUser | null) {
 
 /** 본인 글이거나 관리자면 수정할 수 있다. */
 export function canEditPost(post: NoticePost, user: CurrentUser | null) {
-  return !!user && (user.name === post.author || user.isAdmin);
+  return !!user && (user.id === post.authorId || user.isAdmin);
 }
 
 /** 댓글과 답글을 합친 개수 */
-export function countComments(comments: readonly NoticeComment[] | undefined) {
-  return (comments ?? []).reduce((total, c) => total + 1 + c.replies.length, 0);
+export function countComments(comments: readonly NoticeComment[]) {
+  return comments.reduce((total, c) => total + 1 + c.replies.length, 0);
 }
 
-export function addPost(input: { board: NoticeBoardKey; title: string; content: string; author: string }) {
-  const current = getSnapshot();
-  const post: NoticePost = {
-    id: `${input.board.charAt(0)}${Date.now()}`,
-    board: input.board,
-    title: input.title,
-    content: input.content,
-    author: input.author,
-    date: todayLabel(),
-    views: 0,
-  };
-  update({ ...current, posts: [post, ...current.posts] });
-  return post;
+export async function addPost(input: { board: NoticeBoardKey; title: string; content: string }) {
+  return toPost(await api.createPost(input));
 }
 
-export function editPost(id: string, changes: { title: string; content: string }) {
-  const current = getSnapshot();
-  update({
-    ...current,
-    posts: current.posts.map((p) => (p.id === id ? { ...p, ...changes } : p)),
-  });
+export async function editPost(id: string, changes: { title: string; content: string }) {
+  const postId = toPostId(id);
+  if (postId) await api.updatePost(postId, changes);
 }
 
+/** 조회수는 실패해도 화면에 영향이 없어서 오류를 무시한다. */
 export function increaseViews(id: string) {
-  const current = getSnapshot();
-  update({
-    ...current,
-    posts: current.posts.map((p) => (p.id === id ? { ...p, views: p.views + 1 } : p)),
-  });
+  const postId = toPostId(id);
+  if (postId) api.increaseViews(postId).catch(() => {});
 }
 
-export function addComment(postId: string, author: string, text: string) {
-  const current = getSnapshot();
-  const comment: NoticeComment = { id: `c${Date.now()}`, author, date: todayLabel(), text, replies: [] };
-  update({
-    ...current,
-    comments: { ...current.comments, [postId]: [...(current.comments[postId] ?? []), comment] },
-  });
-}
-
-export function addReply(postId: string, commentId: string, author: string, text: string) {
-  const current = getSnapshot();
-  const list = current.comments[postId] ?? [];
-  update({
-    ...current,
-    comments: {
-      ...current.comments,
-      [postId]: list.map((c) =>
-        c.id === commentId
-          ? { ...c, replies: [...c.replies, { id: `${c.id}r${Date.now()}`, author, date: todayLabel(), text }] }
-          : c,
-      ),
-    },
-  });
+/** parentId가 있으면 그 댓글의 답글로 단다. */
+export async function addComment(postId: string, text: string, parentId?: string) {
+  const id = toPostId(postId);
+  if (!id) return;
+  await api.createComment(id, text, parentId === undefined ? undefined : Number(parentId));
 }

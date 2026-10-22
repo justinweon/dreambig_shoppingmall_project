@@ -28,7 +28,8 @@ interface NoticeEditorModalProps {
   initialTitle?: string;
   initialContent?: string;
   onClose: () => void;
-  onSave: (title: string, html: string) => void;
+  /** 저장에 실패하면 throw한다. 모달이 오류 문구를 보여 준다. */
+  onSave: (title: string, html: string) => Promise<void>;
 }
 
 export default function NoticeEditorModal({
@@ -43,6 +44,7 @@ export default function NoticeEditorModal({
   const subjectId = useId();
   const [title, setTitle] = useState(initialTitle);
   const [error, setError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -62,11 +64,17 @@ export default function NoticeEditorModal({
     };
   }, []);
 
-  function handleSave() {
+  async function handleSave() {
     const trimmed = title.trim();
     if (!trimmed) return setError("제목을 적어 주세요.");
     if (!editor || editor.isEmpty) return setError("내용을 한 줄 이상 적어 주세요.");
-    onSave(trimmed, editor.getHTML());
+    setIsSaving(true);
+    try {
+      await onSave(trimmed, editor.getHTML());
+    } catch {
+      setError("저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -142,9 +150,10 @@ export default function NoticeEditorModal({
           <button
             type="button"
             onClick={handleSave}
-            className="h-11 cursor-pointer rounded-full bg-[#7ed957] px-7 text-[15px] font-bold hover:bg-[#71cc4a]"
+            disabled={isSaving}
+            className="h-11 cursor-pointer rounded-full bg-[#7ed957] px-7 text-[15px] font-bold hover:bg-[#71cc4a] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            저장
+            {isSaving ? "저장 중..." : "저장"}
           </button>
         </div>
       </div>
