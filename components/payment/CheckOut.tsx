@@ -140,10 +140,10 @@ export default function CheckOut(): React.JSX.Element {
     setOrderResult(null);
 
     try {
-        // 같은 회원·상품·수량의 요청번호 재사용
+        // 같은 회원·상품·수량의 요청번호 재사용 - 멱등
         const requestId = getCheckoutRequestId(scope.userId, items);
 
-        // 가격 계산과 주문 저장은 DB에서 처리
+        // 가격 계산과 주문 저장은 DB에서 처리 - 멱등
         const order = await createCheckoutOrder(requestId, items);
 
         // 대기 중 계정이나 장바구니가 바뀌었으면 표시하지 않음

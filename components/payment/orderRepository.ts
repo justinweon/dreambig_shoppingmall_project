@@ -28,7 +28,7 @@ export async function createCheckoutOrder(
     return order;
 }
 
-// 같은 구매의 재시도에 사용할 요청번호 보관
+// 같은 구매의 재시도에 사용할 요청번호 보관 - 멱등성
 export function getCheckoutRequestId(
     userId: string,
     items: readonly CartItem[]
