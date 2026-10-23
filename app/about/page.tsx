@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import kingSejong from "../../shared/asset/king_sejong.png";
 import mousepadImg from "../../shared/asset/sejong_mouse_pad_1.png"; 
 import mugImg from "../../shared/asset/sejong_mug_cup_1.png";
@@ -11,7 +12,7 @@ export default function AboutPage() {
 
             {/* Hero */}
       <section className="bg-[#1a1a1a] text-white">
-        <div className="mx-auto flex max-w-[1200px] flex-col gap-10 px-8 py-[120px] lg:flex-row lg:gap-16">
+        <div className="mx-auto flex max-w-300 flex-col gap-10 px-8 py-30 lg:flex-row lg:gap-16">
           <div className="flex flex-1 flex-col gap-5">
             <p className="text-sm text-[#cfcfcf]">일상에 귀여운 딴지를 거는 방법</p>
             <h1 className="text-5xl font-black leading-tight lg:text-6xl">
@@ -27,7 +28,7 @@ export default function AboutPage() {
               이제는 슬금슬금 우리 일상에 끼어들고 있답니다.
             </p>
           </div>
-          <div className="relative aspect-square w-full max-w-[420px] overflow-hidden rounded-3xl bg-[#2a2a2a] lg:mt-11">
+          <div className="relative aspect-square w-full max-w-105 overflow-hidden rounded-3xl bg-[#2a2a2a] lg:mt-11">
             <Image
               src={kingSejong}
               alt="맥북을 던지는 세종대왕"
@@ -39,7 +40,7 @@ export default function AboutPage() {
       </section>
     
          {/* Goods */}
-      <section className="mx-auto flex max-w-[1200px] flex-col gap-14 px-8 py-[120px]">
+      <section className="mx-auto flex max-w-300 flex-col gap-14 px-8 py-30">
         <div className="text-center">
           <h2 className="text-4xl font-black">우리가 만드는 건 작은 즐거움이에요</h2>
           <p className="mt-4 text-lg text-[#555]">별일 없는 하루에도 피식 웃을 일 하나쯤은 꼭 있어야 하니까요.</p>
@@ -52,7 +53,7 @@ export default function AboutPage() {
             { name: "키링", text: "가방 한구석에서 존재감을 뿜뿜해요.", img: keyringImg },
           ].map(({ name, text, img }) => (
             <div key={name} className="rounded-[20px] border border-[#ededed] p-6 shadow-sm">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-[#f3f2ef]">
+              <div className="relative aspect-4/3 overflow-hidden rounded-xl bg-[#f3f2ef]">
                 <Image src={img} alt={name} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
               </div>
               <h3 className="mt-4 text-xl font-bold">{name}</h3>
@@ -75,7 +76,7 @@ export default function AboutPage() {
 
       {/* Story */}
       <section className="bg-[#1a1a1a] text-white">
-        <div className="mx-auto flex max-w-[1200px] flex-col gap-16 px-8 py-28 lg:flex-row lg:items-center">
+        <div className="mx-auto flex max-w-300 flex-col gap-16 px-8 py-28 lg:flex-row lg:items-center">
           <div className="flex flex-1 flex-col gap-3.5">
             <div className="rounded-[20px] bg-white p-6 text-[#1a1a1a]">
               <p className="text-sm font-bold text-[#a3302b]">AI 환각 현상 발견!</p>
@@ -100,7 +101,7 @@ export default function AboutPage() {
       </section>
 
       {/* Not too serious */}
-      <section className="flex flex-col items-center gap-10 px-8 py-[120px] text-center">
+      <section className="flex flex-col items-center gap-10 px-8 py-30 text-center">
         <div className="flex gap-3">
           {["ㅍ", "ㅣ", "ㅅ", "ㅣ", "ㄱ"].map((c, i) => (
             <div
@@ -114,15 +115,15 @@ export default function AboutPage() {
           ))}
         </div>
         <h2 className="text-4xl font-black">오늘도 너무 진지하지 않기로 해요</h2>
-        <p className="max-w-[640px] text-lg leading-loose text-[#555]">
+        <p className="max-w-160 text-lg leading-loose text-[#555]">
           세상엔 진지한 일이 이미 차고 넘치잖아요. 좋아하는 것만큼은 가볍고 즐겁게 누려도 괜찮아요. 오늘 하루도 고생
           많으셨던 여러분께 말랑한 웃음 하나를 건네 드릴게요.
         </p>
       </section>
 
       {/* CTA */}
-      <section className="px-8 pb-[120px]">
-        <div className="mx-auto flex max-w-[1136px] flex-col items-center gap-5 rounded-[32px] bg-[#1a1a1a] px-8 py-20 text-center text-white">
+      <section className="px-8 pb-30">
+        <div className="mx-auto flex max-w-284 flex-col items-center gap-5 rounded-[32px] bg-[#1a1a1a] px-8 py-20 text-center text-white">
           <h2 className="text-4xl font-black">우리 세종, 궁금하지 않으세요?</h2>
           <p className="text-lg leading-relaxed text-[#e6e6e6]">
             가방에 달아도, 책상에 올려 두어도, 그냥 보기만 해도 귀여워요.{" "}
@@ -130,9 +131,9 @@ export default function AboutPage() {
             <br />
             오늘은 어떤 굿즈로 함께 웃어 볼까요?
           </p>
-          <a href="/product" className="mt-4 rounded-full bg-[#7ed957] px-9 py-4 font-bold text-[#1a1a1a]">
+          <Link href="/product" className="mt-4 rounded-full bg-[#7ed957] px-9 py-4 font-bold text-[#1a1a1a]">
             세종 만나러 가기 →
-          </a>
+          </Link>
         </div>
       </section>
     </main>
