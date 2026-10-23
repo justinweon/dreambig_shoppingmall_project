@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/common/Header"
@@ -29,13 +30,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <CartProvider>
+          <Suspense fallback={null}>
           <HideOnAdmin>
           <Header />
           </HideOnAdmin>
+          </Suspense>
           {children}
+          <Suspense fallback={null}>
           <HideOnAdmin>
           <Footer />
           </HideOnAdmin>
+          </Suspense>
         </CartProvider>
         
       </body>

@@ -7,17 +7,18 @@ import { ImageSource } from "@/util/types/product"
 
 
 interface ProductListProps {
-  imageUrl: ImageSource;
-  name: string;
-  productId: number;
+  imageUrl?: ImageSource;
+  name?: string;
+  productId? : number;
+  onSelect? :() => void;
 }
-export default function ProductList({ imageUrl, name, productId } : ProductListProps): React.JSX.Element {
-  if(name)
+export default function ProductList({ imageUrl, name, productId, onSelect } : ProductListProps): React.JSX.Element {
+  if(name && imageUrl)
   {
     //하나씩 return
     return (
     <div className="flex flex-col items-center gap-4">
-      <Link href={`/product/${productId}`}>
+      <Link href={`/product/${productId}`} onClick={onSelect}>
         <Image
           src={imageUrl}
           alt={name}
